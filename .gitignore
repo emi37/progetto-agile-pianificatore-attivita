@@ -1,0 +1,11 @@
+target/
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+nbproject/
+nb-configuration.xml
+nbactions.xml
+nbbench/
+private/

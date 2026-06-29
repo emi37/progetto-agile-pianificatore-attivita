@@ -1,0 +1,38 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Scarica il codice dal repository
+        uses: actions/checkout@v4
+
+      - name: Configura Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Compila il progetto
+        run: mvn clean compile
+
+      - name: Esegui i test
+        run: mvn test
+
+      - name: Crea il pacchetto dell'applicazione
+        run: mvn package

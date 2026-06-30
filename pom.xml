@@ -23,15 +23,41 @@
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.4.0</version>
+        </dependency>
+        
+        <!-- Moduli Base di JavaFX -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>24-ea+5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>24-ea+5</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <!-- Plugin Surefire per eseguire i test JUnit automaticamente -->
+       <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>it.univaq.disim.agile.progetto.agile.pianificatore.attivita.ProgettoAgilePianificatoreAttivita</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

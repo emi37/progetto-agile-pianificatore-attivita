@@ -22,11 +22,12 @@ public class ProgettoAgilePianificatoreAttivita extends Application {
     private TextField uField;
     private PasswordField pField;
     private Button inviaBtn;
+    private Button vaiRegBtn; // bottone per la registrazione di un nuovo profilo
 
     @Override
     public void start(Stage finestratop) {
-        finestratop.setTitle("Agile Task Manager - Login");
-                // tutta la parte di design main, bottone, sfondo ecc.
+        finestratop.setTitle("Login o registrati");
+                // tutta la parte di design main, bottonei, sfondo ecc.
         GridPane griglia = new GridPane();
         griglia.setAlignment(Pos.CENTER);
         griglia.setHgap(15); griglia.setVgap(15);
@@ -68,7 +69,17 @@ public class ProgettoAgilePianificatoreAttivita extends Application {
         griglia.add(inviaBtn, 0, 4, 2, 1);
         GridPane.setMargin(inviaBtn, new Insets(10, 0, 0, 0));
 
+     //button di registrazione
+        vaiRegBtn = new Button("Registrati");
+        vaiRegBtn.setFont(Font.font("Helvetica", 12));
+        vaiRegBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #007acc; -fx-cursor: hand; -fx-underline: true;");
+        griglia.add(vaiRegBtn, 0, 5, 2, 1);
+        GridPane.setHalignment(vaiRegBtn, javafx.geometry.HPos.CENTER);
+        
         gestisciInterazioniBottone();
+
+        // evento per aprire il popup di iscrizione
+        vaiRegBtn.setOnAction(e -> mostraFinestraRegistrazione(finestratop));
 
         inviaBtn.setOnAction(evento -> {
             String inputUser = uField.getText();
@@ -80,64 +91,85 @@ public class ProgettoAgilePianificatoreAttivita extends Application {
             
             if (accountTrovato != null) {
                 // loggato, credenziali corrette(cioe trovate nel DB)
-                mostraNotificaCustom(finestratop, "Esito Login", "Login Effettuato!", "Benvenuto, " + accountTrovato.getUsername() + "!");
+                mostraNotificaCustom(finestratop, "Esito login", "Login effettuato con successo !", "Benvenuto, " + accountTrovato.getUsername()  );
             } else {
                 // errore perceh esiste nessuna corrispondenza sul DB   
-                mostraNotificaCustom(finestratop, "Errore di Autenticazione", "Errore", "Username o Password non corretti. Riprova.");
-            }  
-        }
-        );
-        Scene schermata = new Scene(griglia, 450, 350);
+                mostraNotificaCustom(finestratop, "Errore di Autenticazione", "Errore", "Username o Password non corretti,riprova.");
+            }   
+        });
+
+        Scene schermata = new Scene(griglia, 450, 420);
         finestratop.setScene(schermata);
         finestratop.setResizable(false);
         finestratop.show();
     }
+
     private void gestisciInterazioniBottone() {
-        inviaBtn.setOnMouseEntered(mouseIn -> inviaBtn.setStyle(
-            "-fx-background-color: #0098ff; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 12; -fx-cursor: hand;"
-        ));
-        inviaBtn.setOnMouseExited(mouseOut -> inviaBtn.setStyle(
-            "-fx-background-color: #007acc; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 12; -fx-cursor: hand;"));
+        inviaBtn.setOnMouseEntered(mouseIn -> inviaBtn.setStyle("-fx-background-color: #0098ff; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 12; -fx-cursor: hand;"));
+        inviaBtn.setOnMouseExited(mouseOut -> inviaBtn.setStyle("-fx-background-color: #007acc; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 12; -fx-cursor: hand;"));
+        vaiRegBtn.setOnMouseEntered(h -> vaiRegBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #0098ff; -fx-cursor: hand; -fx-underline: true;"));
+        vaiRegBtn.setOnMouseExited(h -> vaiRegBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #007acc; -fx-cursor: hand; -fx-underline: true;"));
     }
-    // metodo per generare la finestra di avviso del login con lo stesso stile di grafica
+    private void mostraFinestraRegistrazione(Stage princ) {
+        Stage popReg = new Stage();
+        popReg.initModality(Modality.APPLICATION_MODAL);
+        popReg.initOwner(princ); popReg.setTitle("Registrati");
+
+        GridPane gReg = new GridPane();
+        gReg.setAlignment(Pos.CENTER); gReg.setHgap(12); gReg.setVgap(12); gReg.setPadding(new Insets(30));
+        gReg.setStyle("-fx-background-color: #1e1e24;");
+
+        Label tReg = new Label("REGISTRAZIONE");
+        tReg.setFont(Font.font("Helvetica", FontWeight.BOLD, 18)); tReg.setStyle("-fx-text-fill: #ffffff;");
+        gReg.add(tReg, 0, 0, 2, 1);
+
+        Label lu = new Label("Nome utente"); lu.setStyle("-fx-text-fill: #a0a0aa;"); gReg.add(lu, 0, 1);
+        TextField tfUser = new TextField();
+        tfUser.setStyle("-fx-background-color: #2a2a35; -fx-text-fill: white; -fx-background-radius: 6;"); gReg.add(tfUser, 1, 1);
+
+        Label lp = new Label("Password"); lp.setStyle("-fx-text-fill: #a0a0aa;"); gReg.add(lp, 0, 2);
+        PasswordField pfPass = new PasswordField();
+        pfPass.setStyle("-fx-background-color: #2a2a35; -fx-text-fill: white; -fx-background-radius: 6;"); gReg.add(pfPass, 1, 2);
+
+        Button eseguiRegBtn = new Button("REGISTRA");
+        eseguiRegBtn.setStyle("-fx-background-color: #007acc; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8; -fx-cursor: hand;");
+        gReg.add(eseguiRegBtn, 1, 4);
+
+        eseguiRegBtn.setOnAction(ev -> {
+            String u = tfUser.getText(); String p = pfPass.getText();
+            if(u.isEmpty() || p.isEmpty()) {
+                mostraNotificaCustom(popReg, "Errore", "Campi vuoti", "compila tutto prima di continuare");
+            } else {
+                UtenteDAO regDao = new UtenteDAO();
+                boolean transazioneOk = regDao.registraUtente(u, p);
+                if(transazioneOk) {
+                    mostraNotificaCustom(popReg, "Esito", "Successo!", "Ti sei registrato con successo !");
+                    popReg.close();
+                } else {
+                    mostraNotificaCustom(popReg, "Errore", "Riprova", "Username gia esistente");
+                }
+            }
+        });
+
+        Scene sc = new Scene(gReg, 380, 280);
+        popReg.setScene(sc); popReg.setResizable(false); popReg.showAndWait();
+    }
+
     private void mostraNotificaCustom(Stage principale, String titoloFinestra, String intestazione, String messaggio) {
         Stage finestraPopup = new Stage();
-        finestraPopup.initModality(Modality.APPLICATION_MODAL);
-        finestraPopup.initOwner(principale);
-        finestraPopup.setTitle(titoloFinestra);
-
-        VBox boxContenuto = new VBox(15);
-        boxContenuto.setAlignment(Pos.CENTER);
-        boxContenuto.setPadding(new Insets(25));
+        finestraPopup.initModality(Modality.APPLICATION_MODAL); finestraPopup.initOwner(principale); finestraPopup.setTitle(titoloFinestra);
+        VBox boxContenuto = new VBox(15); boxContenuto.setAlignment(Pos.CENTER); boxContenuto.setPadding(new Insets(25));
         boxContenuto.setStyle("-fx-background-color: #1e1e24;");
-
-        Label lblIntestazione = new Label(intestazione);
-        lblIntestazione.setFont(Font.font("Helvetica", FontWeight.BOLD, 18));
-        lblIntestazione.setStyle("-fx-text-fill: #ffffff;");
-
-        Label lblMessaggio = new Label(messaggio);
-        lblMessaggio.setFont(Font.font("Helvetica", 14));
-        lblMessaggio.setStyle("-fx-text-fill: #a0a0aa;");
-        lblMessaggio.setWrapText(true);
-
-        Button chiudiBtn = new Button("OK");
-        chiudiBtn.setFont(Font.font("Helvetica", FontWeight.BOLD, 13));
-        chiudiBtn.setPrefWidth(100);
+        Label lblIntestazione = new Label(intestazione); lblIntestazione.setFont(Font.font("Helvetica", FontWeight.BOLD, 18)); lblIntestazione.setStyle("-fx-text-fill: #ffffff;");
+        Label lblMessaggio = new Label(messaggio); lblMessaggio.setFont(Font.font("Helvetica", 14)); lblMessaggio.setStyle("-fx-text-fill: #a0a0aa;"); lblMessaggio.setWrapText(true);
+        Button chiudiBtn = new Button("OK"); chiudiBtn.setFont(Font.font("Helvetica", FontWeight.BOLD, 13)); chiudiBtn.setPrefWidth(100);
         chiudiBtn.setStyle("-fx-background-color: #007acc; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8; -fx-cursor: hand;");
-        
-        chiudiBtn.setOnMouseEntered(e -> chiudiBtn.setStyle("-fx-background-color: #0098ff; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8; -fx-cursor: hand;"));
-        chiudiBtn.setOnMouseExited(e -> chiudiBtn.setStyle("-fx-background-color: #007acc; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8; -fx-cursor: hand;"));
         chiudiBtn.setOnAction(e -> finestraPopup.close());
-
         boxContenuto.getChildren().addAll(lblIntestazione, lblMessaggio, chiudiBtn);
-
-        Scene scenaPopup = new Scene(boxContenuto, 350, 180);
-        finestraPopup.setScene(scenaPopup);
-        finestraPopup.setResizable(false);
-        finestraPopup.showAndWait();
+        Scene scenaPopup = new Scene(boxContenuto, 350, 180); finestraPopup.setScene(scenaPopup); finestraPopup.setResizable(false); finestraPopup.showAndWait();
     }
 
-            public static void main(String[] args) {
-                launch(args);
-                }
+    public static void main(String[] args) { 
+        
+            launch(args); }
 }

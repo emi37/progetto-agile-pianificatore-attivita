@@ -23,7 +23,28 @@
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- JavaFX Controls (Interfaccia base) -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>18.0.1</version>
+        </dependency>
+
+        <!-- JavaFX FXML (Per leggere i file .fxml) -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>18.0.1</version>
+        </dependency>
+        <!-- Driver JDBC per MySQL -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.33</version>
+        </dependency>
     </dependencies>
+    
 
     <build>
         <plugins>

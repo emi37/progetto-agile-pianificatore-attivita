@@ -1,0 +1,13 @@
+/* Foglio di stile separato per mantenere il codice UI pulito e leggibile. */
+.root {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 40px;
+}
+
+.button {
+    -fx-background-color: #0078D7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+}

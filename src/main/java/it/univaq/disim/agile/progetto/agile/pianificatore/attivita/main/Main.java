@@ -1,7 +1,7 @@
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.main;
 
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher;
-import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.ViewException;
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewException;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

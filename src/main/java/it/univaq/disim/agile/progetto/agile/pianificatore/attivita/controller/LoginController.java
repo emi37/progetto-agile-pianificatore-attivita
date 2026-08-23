@@ -1,9 +1,9 @@
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller;
 
 import database.UtenteDAO;
-import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.ViewException;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Utente;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher;
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

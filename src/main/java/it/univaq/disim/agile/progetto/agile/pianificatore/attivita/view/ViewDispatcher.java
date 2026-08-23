@@ -8,7 +8,7 @@ package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view;
  *
  * @author edoar
  */
-import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.ViewException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -110,8 +110,4 @@ public class ViewDispatcher {
             throw new ViewException("Errore durante il caricamento della schermata di Registrazione", e);
         }
     }
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes

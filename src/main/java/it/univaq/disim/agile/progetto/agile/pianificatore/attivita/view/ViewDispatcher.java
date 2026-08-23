@@ -97,6 +97,20 @@ public class ViewDispatcher {
             throw new ViewException(e);
         }
     }
+    /**
+     * Metodo per caricare e mostrare la schermata di registrazione.
+     */
+    public void registrazioneView() throws ViewException {
+        try {
+            Parent registrazioneRoot = FXMLLoader.load(getClass().getResource("/viste/registrazione.fxml"));
+            Scene scene = new Scene(registrazioneRoot);
+            stage.setScene(scene);
+            stage.setTitle("Pianificatore attività (Registrazione)");
+            stage.show();
+        } catch (IOException e) {
+            throw new ViewException("Errore durante il caricamento della schermata di Registrazione", e);
+        }
+    }
 }
     
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<!-- struttura per la registrazione -->
+<VBox alignment="CENTER" spacing="15.0" stylesheets="@registrazione.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.RegistrazioneController">
+   
+   <Label text="Crea un nuovo account" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+   
+   <TextField fx:id="usernameField" promptText="Scegli username..." maxWidth="200" />
+   <PasswordField fx:id="passwordField" promptText="Scegli password..." maxWidth="200" />
+   <PasswordField fx:id="confermaPasswordField" promptText="Conferma password" maxWidth="200" />
+   
+   <Label fx:id="errorLabel" textFill="RED" />
+   
+   <HBox alignment="CENTER" spacing="10.0">
+       <Button text="Annulla" onAction="#tornaAlLoginAction" styleClass="button-secondary" />
+       <Button text="Registrati" onAction="#registraAction" styleClass="button-primary" />
+   </HBox>
+   
+</VBox>

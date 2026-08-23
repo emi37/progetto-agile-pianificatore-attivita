@@ -25,4 +25,14 @@ public class UtenteDAOTest {
         // segnalando che l'autenticazione è stata bloccata come previsto.
         assertNull(risultato, "L'autenticazione dovrebbe restituire null per credenziali errate.");
     }
+    @Test
+    public void testRegistrazioneFallitaDatiVuoti() {
+        UtenteDAO dao = new UtenteDAO();
+        
+        // Similiamo un inserimento errato dal DB passando parametri nulli
+        boolean risultato = dao.registraUtente(null, null);
+        
+        // L'inserimento non deve andare a buon fine
+        assertFalse(risultato, "La registrazione non dovrebbe avere successo con parametri nulli.");
+    }
 }

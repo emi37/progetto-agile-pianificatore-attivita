@@ -5,17 +5,19 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- struttura per del login -->
+<!-- struttura per il login -->
 <VBox alignment="CENTER" spacing="15.0" stylesheets="@login.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.LoginController">
    
-   <Label text="Benvenuto in Duff Tech - Pianificatore" />
+   <Label text="Effettua il login " />
    
    <!-- i campi di input collegati al controller tramite fx:id -->
-   <TextField fx:id="usernameField" promptText="Inserisci Username" maxWidth="200" />
-   <PasswordField fx:id="passwordField" promptText="Inserisci Password" maxWidth="200" />
+   <TextField fx:id="usernameField" promptText="Inserisci username..." maxWidth="200" />
+   <PasswordField fx:id="passwordField" promptText="Inserisci password..." maxWidth="200" />
    
    <!--ertichetta per i messaggi di errore(invisibile di default) -->
    <Label fx:id="errorLabel" textFill="RED" />  
    <!--Bottone che attiva il login -->
    <Button text="Accedi" onAction="#loginAction" />
+   
+   <Button text="Non hai un account? Registrati qui" onAction="#vaiARegistrazioneAction" />
 </VBox>

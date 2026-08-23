@@ -42,4 +42,29 @@ public class UtenteDAO {
         
         return null;
     }
+    /**
+     * Registra un nuovo utente nel database tramite la sezione registra nel html.
+     * Utilizza una query INSERT protetta da PreparedStatement.
+     */
+    public boolean registraUtente(String username, String password) {
+        String query = "INSERT INTO utenti (username, password) VALUES (?, ?)";
+        
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASS);
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            // Impostiamo i parametri in modo sicuro contro le SQL Injection
+            statement.setString(1, username);
+            statement.setString(2, password);
+            
+            // executeUpdate() restituisce il numero di righe modificate nel DB
+            int righeInserite = statement.executeUpdate();
+            
+            // Se almeno una riga è stata inserita, la registrazione ha avuto successo
+            return righeInserite > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

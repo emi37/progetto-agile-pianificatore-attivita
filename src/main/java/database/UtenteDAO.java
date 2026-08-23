@@ -2,26 +2,20 @@ package database;
 
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Utente;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * classe che gestisce le operazioni di database riguardanti gli utenti.
+ * Classe che gestisce le operazioni di database riguardanti gli utenti.
  */
 public class UtenteDAO {
-
-    // Da sostituire con le credenziali reali del tuo database MySQL
-    private static final String URL = "jdbc:mysql://localhost:3306/dufftech_db";
-    private static final String USER = "root";
-    private static final String PASS = "password";
 
     public Utente autentica(String username, String password) {
         String query = "SELECT * FROM utenti WHERE username = ? AND password = ?";
         
-        // Uso del try-with-resources per chiudere in automatico la connessione
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASS);
+        // Uso del try-with-resources e del DatabaseManager per la connessione
+        try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             
             // Parametri sicuri per prevenire attacchi SQL Injection
@@ -42,14 +36,15 @@ public class UtenteDAO {
         
         return null;
     }
+
     /**
-     * Registra un nuovo utente nel database tramite la sezione registra nel html.
+     * Registra un nuovo utente nel database.
      * Utilizza una query INSERT protetta da PreparedStatement.
      */
     public boolean registraUtente(String username, String password) {
         String query = "INSERT INTO utenti (username, password) VALUES (?, ?)";
         
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASS);
+        try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             
             // Impostiamo i parametri in modo sicuro contro le SQL Injection

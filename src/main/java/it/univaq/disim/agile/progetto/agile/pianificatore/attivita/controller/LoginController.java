@@ -1,7 +1,7 @@
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller;
 
 import database.UtenteDAO;
-import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.ViewException; // fai crtl shift I per aggiungere automaticamente questa libreria che mancava, ti fa l import automatico in pratica
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.ViewException;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Utente;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher;
 import javafx.event.ActionEvent;
@@ -13,10 +13,8 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
-
 /**
- * Controller per la vista del Login.  Initializable e per eseguire le logiche all'avvio.
+ * Controller per la vista del Login. Initializable e per eseguire le logiche all'avvio.
  */
 public class LoginController implements Initializable {
 
@@ -51,12 +49,20 @@ public class LoginController implements Initializable {
 
         if (utente != null) {
             errorLabel.setText("");
-            // Futuro collegamento alla dashboard tramite il Dispatcher
             System.out.println("Login confermato per: " + utente.getUsername());
+            
+            // Collegamento alla dashboard tramite il Dispatcher gestito con eccezione
+            try {
+                ViewDispatcher.getInstance().loggedIn();
+            } catch (ViewException e) {
+                e.printStackTrace();
+            }
+            
         } else {
             errorLabel.setText("Credenziali non valide.");
         }
     }
+    
     @FXML
     private void vaiARegistrazioneAction(ActionEvent event) {
         try {

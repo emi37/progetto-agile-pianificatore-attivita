@@ -49,7 +49,7 @@ public class ViewDispatcher {
     }
 
     // 3. Metodo invocato dopo il login: imposta il layout base e la home
-    public void loggedIn() {
+    public void loggedIn() throws ViewException {
         try {
             layout = (BorderPane) loadView("layout");
             Parent home = loadView("home");
@@ -112,5 +112,3 @@ public class ViewDispatcher {
         }
     }
 }
-    
-

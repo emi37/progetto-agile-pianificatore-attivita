@@ -8,8 +8,6 @@ package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view;
  *
  * @author edoar
  */
-
-
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.ViewException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,10 +21,10 @@ public class ViewDispatcher {
 
     // 1. Implementazione del Singleton
     private static ViewDispatcher instance = new ViewDispatcher();
-    
+
     private Stage stage;
     private BorderPane layout;
-    
+
     private static final String FXML_SUFFIX = ".fxml";
     private static final String RESOURCE_BASE = "/viste/";
 
@@ -97,8 +95,9 @@ public class ViewDispatcher {
             throw new ViewException(e);
         }
     }
+
     /**
-     * Metodo per caricare e mostrare la schermata di registrazione.
+     * @throws ViewException
      */
     public void registrazioneView() throws ViewException {
         try {
@@ -111,4 +110,8 @@ public class ViewDispatcher {
             throw new ViewException("Errore durante il caricamento della schermata di Registrazione", e);
         }
     }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

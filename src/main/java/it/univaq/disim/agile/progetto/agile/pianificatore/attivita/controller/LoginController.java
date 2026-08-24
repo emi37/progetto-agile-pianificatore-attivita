@@ -51,13 +51,13 @@ public class LoginController implements Initializable {
             errorLabel.setText("");
             System.out.println("Login confermato per: " + utente.getUsername());
             
-            // Collegamento alla dashboard tramite il Dispatcher gestito con eccezione
+            // Il login ha avuto successo: diciamo al Dispatcher di portarci nella Dashboard
             try {
-                ViewDispatcher.getInstance().loggedIn();
+                ViewDispatcher.getInstance().homeView();
             } catch (ViewException e) {
                 e.printStackTrace();
+                errorLabel.setText("Errore di caricamento della dashboard.");
             }
-            
         } else {
             errorLabel.setText("Credenziali non valide.");
         }
@@ -71,4 +71,4 @@ public class LoginController implements Initializable {
             e.printStackTrace();
         }
     }
-}
+}//ok

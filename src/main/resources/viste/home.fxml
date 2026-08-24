@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Struttura della Dashboard-->
+<VBox alignment="CENTER" spacing="20.0" stylesheets="@home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.HomeController">
+   
+   <Label fx:id="benvenutoLabel" styleClass="titolo-dashboard" />
+   <Label text="Questa sarà la tua area per le gestire le attività " />
+   
+</VBox>

@@ -1,0 +1,12 @@
+
+/* Stile base per la Dashboard */
+.root {
+    -fx-background-color: #ffffff;
+    -fx-padding: 50px;
+}
+
+.titolo-dashboard {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}

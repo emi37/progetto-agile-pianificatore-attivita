@@ -110,4 +110,19 @@ public class ViewDispatcher {
             throw new ViewException("Errore durante il caricamento della schermata di Registrazione", e);
         }
     }
+    
+    /**
+     *dashboard utente dopo un login effettuato 
+     */
+    public void homeView() throws ViewException {
+        try {
+            Parent homeRoot = FXMLLoader.load(getClass().getResource("/viste/home.fxml"));
+            Scene scene = new Scene(homeRoot);
+            stage.setScene(scene);
+            stage.setTitle("La tua dashboard");
+            stage.show();
+        } catch (IOException e) {
+            throw new ViewException("Errore durante il caricamento della dashboard", e);
+        }
+    }
 }

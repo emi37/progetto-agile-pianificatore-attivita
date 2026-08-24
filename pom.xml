@@ -16,10 +16,10 @@
     </properties>
 
     <dependencies>
-        <!-- Framework JUnit 5 per i test di unità richiesto dal corso -->
+        <!-- Framework JUnit per scrivere ed eseguire i test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>

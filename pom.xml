@@ -24,6 +24,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Pacchetto completo per scrivere ed eseguire i test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- JavaFX Controls (Interfaccia base) -->
         <dependency>
             <groupId>org.openjfx</groupId>

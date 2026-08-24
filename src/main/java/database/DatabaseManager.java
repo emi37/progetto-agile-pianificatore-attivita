@@ -16,8 +16,8 @@ public class DatabaseManager {
 
     // Cambia questi valori con quelli del tuo database!
     private static final String URL = "jdbc:mysql://localhost:3306/progetto_agile_pianificatore_attivita?noAccessToProcedureBodies=true&serverTimezone=Europe/Rome";
-    private static final String USER = "root"; // Il tuo username MySQL
-    private static final String PASSWORD = "12345"; // La tua password MySQL
+    private static final String USER = "root"; //username MySQL
+    private static final String PASSWORD = "12345"; // password MySQL
 
     /**
      * Metodo statico per ottenere la connessione al DBMS. Come da appunti, si

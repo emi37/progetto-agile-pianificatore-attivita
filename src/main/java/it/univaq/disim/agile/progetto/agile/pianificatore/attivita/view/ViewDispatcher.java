@@ -1,14 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view;
 
-/**
- *
- * @author edoar
- */
-
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Utente;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -110,9 +102,20 @@ public class ViewDispatcher {
             throw new ViewException("Errore durante il caricamento della schermata di Registrazione", e);
         }
     }
-    
+
+    // Gestione dell'utente loggato in sessione
+    private Utente utenteLoggato;
+
+    public Utente getUtenteLoggato() {
+        return utenteLoggato;
+    }
+
+    public void setUtenteLoggato(Utente utenteLoggato) {
+        this.utenteLoggato = utenteLoggato;
+    }
+
     /**
-     *dashboard utente dopo un login effettuato 
+     * Dashboard utente dopo un login effettuato 
      */
     public void homeView() throws ViewException {
         try {

@@ -1,11 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
 
-<!-- Struttura della Dashboard-->
-<VBox alignment="CENTER" spacing="20.0" stylesheets="@home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.HomeController">
-   
-   <Label fx:id="benvenutoLabel" styleClass="titolo-dashboard" />
-   <Label text="Questa sarà la tua area per le gestire le attività " />
-   
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.HomeController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <children>
+        <Label fx:id="benvenutoLabel" text="Benvenuto nella tua Home Personale!">
+            <font>
+                <Font name="System Bold" size="22.0" />
+            </font>
+        </Label>
+
+        <!-- Sezione 1: Tabella attività in scadenza -->
+        <VBox spacing="8.0">
+            <children>
+                <Label text="Attività più Urgenti (Scadenza Imminente)">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <TableView fx:id="tabellaAttivitaUrgenti" prefHeight="200.0" prefWidth="600.0">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colTitle" prefWidth="180.0" text="Titolo" />
+                        <TableColumn fx:id="colDeadline" prefWidth="120.0" text="Scadenza" />
+                        <TableColumn fx:id="colCategory" prefWidth="150.0" text="Categoria" />
+                        <TableColumn fx:id="colPriority" prefWidth="130.0" text="Priorità" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+
+        <!-- Sezione 2: Tabella attività completate di recente -->
+        <VBox spacing="8.0">
+            <children>
+                <Label text="Attività Completate di Recente">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <TableView fx:id="tabellaAttivitaCompletate" prefHeight="180.0" prefWidth="600.0">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colTitleDone" prefWidth="250.0" text="Titolo" />
+                        <TableColumn fx:id="colCompletionDate" prefWidth="150.0" text="Data Completamento" />
+                        <TableColumn fx:id="colCategoryDone" prefWidth="200.0" text="Categoria" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
 </VBox>

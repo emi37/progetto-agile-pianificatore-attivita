@@ -1,83 +1,162 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package database;
 
-/**
- *
- * @author Filippo
- */
-
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Attivita;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Categoria;
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Priorita;
 
-/**
- * Data Access Object per l'entità Attivita.
- * Si occupa di tradurre l'oggetto Java in record relazionali sul database MySQL.
- */
-
-import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Attivita;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Data Access Object per l'entità Attivita.
- * Allineato con la struttura reale del database (inclusivo di Foreign Keys e Datetime).
+ * Data Access Object per l'entità Attivita. Gestisce la persistenza e le query
+ * sul database MySQL tramite JDBC (PreparedStatement).
  */
 public class AttivitaDAO {
 
-    // URL aggiornato con il nome reale del tuo schema dal Workbench
-    private static final String URL = "jdbc:mysql://localhost:3306/progetto_agile_pianificatore_attivita";
-    private static final String USER = "root";
-    private static final String PASS = "12345"; 
-
     /**
      * Inserisce una nuova attività nel database utilizzando PreparedStatement.
-     * Riceve l'oggetto Attivita e le chiavi esterne (ID) necessarie per le relazioni.
      */
     public boolean inserisciAttivita(Attivita attivita, int idUtente, int idCategoria, int idPriorita) {
         String query = "INSERT INTO attivita (titolo, descrizione, data_scadenza, data_completamento, completata, id_utente, id_categoria, id_priorita) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASS);
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            
+
+        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
+
             statement.setString(1, attivita.getTitolo());
             statement.setString(2, attivita.getDescrizione());
-            
-            // Gestione sicura del passaggio da LocalDate (Java) a Datetime (SQL)
+
             if (attivita.getDataScadenza() != null) {
                 statement.setTimestamp(3, Timestamp.valueOf(attivita.getDataScadenza().atStartOfDay()));
             } else {
                 statement.setNull(3, Types.TIMESTAMP);
             }
-            
+
             if (attivita.getDataCompletamento() != null) {
                 statement.setTimestamp(4, Timestamp.valueOf(attivita.getDataCompletamento().atStartOfDay()));
             } else {
                 statement.setNull(4, Types.TIMESTAMP);
             }
-            
+
             statement.setBoolean(5, attivita.isCompletata());
-            
-            // Inserimento delle chiavi esterne
             statement.setInt(6, idUtente);
             statement.setInt(7, idCategoria);
             statement.setInt(8, idPriorita);
-            
+
             int righeInserite = statement.executeUpdate();
             return righeInserite > 0;
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Recupera la lista delle attività non completate per la Dashboard,
+     * ordinate per scadenza imminente. Sfrutta le JOIN per mappare
+     * correttamente Categoria e Priorità in base ai costruttori del dominio.
+     */
+    public List<Attivita> getAttivitaUrgenti(int idUtente) {
+        List<Attivita> lista = new ArrayList<>();
+        // Specifichiamo l'id attività in modo sicuro con un alias se la PK ha un nome specifico
+        String query = "SELECT a.id_attivita AS id_att, a.titolo, a.descrizione, a.data_scadenza, a.data_completamento, a.completata, "
+                + "c.id_categoria, c.nome_categoria, c.id_utente as cat_utente, p.livello "
+                + "FROM attivita a "
+                + "LEFT JOIN categoria c ON a.id_categoria = c.id_categoria "
+                + "INNER JOIN priorita p ON a.id_priorita = p.id_priorita "
+                + "WHERE a.id_utente = ? AND a.completata = false "
+                + "ORDER BY a.data_scadenza ASC";
+
+        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, idUtente);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id_att");
+                    String titolo = rs.getString("titolo");
+                    String descrizione = rs.getString("descrizione");
+
+                    Timestamp tsScadenza = rs.getTimestamp("data_scadenza");
+                    LocalDate dataScadenza = (tsScadenza != null) ? tsScadenza.toLocalDateTime().toLocalDate() : null;
+
+                    Timestamp tsCompletamento = rs.getTimestamp("data_completamento");
+                    LocalDate dataCompletamento = (tsCompletamento != null) ? tsCompletamento.toLocalDateTime().toLocalDate() : null;
+
+                    boolean completata = rs.getBoolean("completata");
+
+                    // Ricostruzione oggetti di dominio coerenti con i costruttori ricevuti
+                    int idCat = rs.getInt("id_categoria");
+                    String nomeCat = rs.getString("nome_categoria");
+                    int catUtente = rs.getInt("cat_utente");
+                    Categoria categoria = new Categoria(idCat, nomeCat, catUtente);
+
+                    String livelloPrio = rs.getString("livello");
+                    Priorita priorita = new Priorita(livelloPrio);
+
+                    Attivita attivita = new Attivita(id, titolo, descrizione, dataScadenza, dataCompletamento, completata, null, categoria, priorita);
+                    lista.add(attivita);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    /**
+     * Recupera le ultime attività completate dall'utente, ordinate per data di
+     * completamento più recente.
+     */
+    public List<Attivita> getAttivitaCompletateRecenti(int idUtente) {
+        List<Attivita> lista = new ArrayList<>();
+        String query = "SELECT a.id_attivita AS id_att, a.titolo, a.descrizione, a.data_scadenza, a.data_completamento, a.completata, "
+                + "c.id_categoria, c.nome_categoria, c.id_utente as cat_utente, p.livello "
+                + "FROM attivita a "
+                + "LEFT JOIN categoria c ON a.id_categoria = c.id_categoria "
+                + "INNER JOIN priorita p ON a.id_priorita = p.id_priorita "
+                + "WHERE a.id_utente = ? AND a.completata = true "
+                + "ORDER BY a.data_completamento DESC LIMIT 10";
+
+        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, idUtente);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id_att");
+                    String titolo = rs.getString("titolo");
+                    String descrizione = rs.getString("descrizione");
+
+                    Timestamp tsScadenza = rs.getTimestamp("data_scadenza");
+                    LocalDate dataScadenza = (tsScadenza != null) ? tsScadenza.toLocalDateTime().toLocalDate() : null;
+
+                    Timestamp tsCompletamento = rs.getTimestamp("data_completamento");
+                    LocalDate dataCompletamento = (tsCompletamento != null) ? tsCompletamento.toLocalDateTime().toLocalDate() : null;
+
+                    boolean completata = rs.getBoolean("completata");
+
+                    int idCat = rs.getInt("id_categoria");
+                    String nomeCat = rs.getString("nome_categoria");
+                    int catUtente = rs.getInt("cat_utente");
+                    Categoria categoria = new Categoria(idCat, nomeCat, catUtente);
+
+                    String livelloPrio = rs.getString("livello");
+                    Priorita priorita = new Priorita(livelloPrio);
+
+                    Attivita attivita = new Attivita(id, titolo, descrizione, dataScadenza, dataCompletamento, completata, null, categoria, priorita);
+                    lista.add(attivita);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
 }

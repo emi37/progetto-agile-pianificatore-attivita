@@ -24,7 +24,11 @@ public class UtenteDAO {
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+                    // Leggiamo l'id dal database (assicurati che la colonna si chiami 'id' o 'id_utente')
+                    int id = resultSet.getInt("id"); 
+                    
                     return new Utente(
+                        id,
                         resultSet.getString("username"), 
                         resultSet.getString("password")
                     );

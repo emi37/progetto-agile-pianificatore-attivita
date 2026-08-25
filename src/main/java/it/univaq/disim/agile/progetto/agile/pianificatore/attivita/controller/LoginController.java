@@ -14,7 +14,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller per la vista del Login. Initializable e per eseguire le logiche all'avvio.
+ * Controller per la vista del Login. Initializable e per eseguire le logiche
+ * all'avvio.
  */
 public class LoginController implements Initializable {
 
@@ -32,7 +33,7 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         utenteDAO = new UtenteDAO();
-        errorLabel.setText(""); 
+        errorLabel.setText("");
     }
 
     @FXML
@@ -50,8 +51,10 @@ public class LoginController implements Initializable {
         if (utente != null) {
             errorLabel.setText("");
             System.out.println("Login confermato per: " + utente.getUsername());
-            
-            // Il login ha avuto successo: diciamo al Dispatcher di portarci nella Dashboard
+
+            // Salviamo l'utente del dispatcher prima di cambiare vista
+            ViewDispatcher.getInstance().setUtenteLoggato(utente);
+
             try {
                 ViewDispatcher.getInstance().homeView();
             } catch (ViewException e) {
@@ -62,7 +65,7 @@ public class LoginController implements Initializable {
             errorLabel.setText("Credenziali non valide.");
         }
     }
-    
+
     @FXML
     private void vaiARegistrazioneAction(ActionEvent event) {
         try {

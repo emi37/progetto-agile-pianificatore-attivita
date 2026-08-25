@@ -1,18 +1,35 @@
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain;
 
 /**
- * classe che rappresenta un utente base dell'app */
+ * Classe che rappresenta un utente base dell'app
+ */
 public class Utente {
     
+    private int id; // Aggiunto l'ID dell'utente!
     private String username;
     private String password;
     
-    // costruttore 
+    // Costruttore con ID (utile quando lo prelevate dal DB)
+    public Utente(int id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
+    // Costruttore originale (senza ID, per retrocompatibilità se serve)
     public Utente(String username, String password) {
         this.username = username;
         this.password = password;
     }
-//getter e setter
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
     }

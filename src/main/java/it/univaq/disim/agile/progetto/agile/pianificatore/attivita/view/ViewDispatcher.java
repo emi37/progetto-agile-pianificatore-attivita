@@ -19,6 +19,9 @@ public class ViewDispatcher {
 
     private static final String FXML_SUFFIX = ".fxml";
     private static final String RESOURCE_BASE = "/viste/";
+    
+    // Gestione dell'utente loggato in sessione
+    private Utente utenteLoggato;
 
     // Costruttore privato per il Singleton
     private ViewDispatcher() {
@@ -88,9 +91,6 @@ public class ViewDispatcher {
         }
     }
 
-    /**
-     * @throws ViewException
-     */
     public void registrazioneView() throws ViewException {
         try {
             Parent registrazioneRoot = FXMLLoader.load(getClass().getResource("/viste/registrazione.fxml"));
@@ -103,9 +103,6 @@ public class ViewDispatcher {
         }
     }
 
-    // Gestione dell'utente loggato in sessione
-    private Utente utenteLoggato;
-
     public Utente getUtenteLoggato() {
         return utenteLoggato;
     }
@@ -114,9 +111,6 @@ public class ViewDispatcher {
         this.utenteLoggato = utenteLoggato;
     }
 
-    /**
-     * Dashboard utente dopo un login effettuato 
-     */
     public void homeView() throws ViewException {
         try {
             Parent homeRoot = FXMLLoader.load(getClass().getResource("/viste/home.fxml"));
@@ -128,4 +122,20 @@ public class ViewDispatcher {
             throw new ViewException("Errore durante il caricamento della dashboard", e);
         }
     }
+
+    /**
+     * Metodo per navigare verso la schermata di Creazione di una nuova Attività.
+     * Allineato perfettamente alla logica strutturale di homeView().
+     */
+    public void creazioneAttivitaView() {
+        try {
+            Parent creazioneRoot = FXMLLoader.load(getClass().getResource("/viste/creazioneAttivita.fxml"));
+            Scene scene = new Scene(creazioneRoot);
+            stage.setScene(scene);
+            stage.setTitle("Crea Nuova Attività");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }   
 }

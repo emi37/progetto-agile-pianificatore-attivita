@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -12,16 +13,19 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
-        <Label fx:id="benvenutoLabel" text="Benvenuto nella tua Home Personale!">
+        <Label fx:id="benvenutoLabel" text="Benvenuto nella tua home personale">
             <font>
                 <Font name="System Bold" size="22.0" />
             </font>
         </Label>
 
+             <!-- Bottone per creare una attivta -->
+        <Button text="Crea una nuova attività" onAction="#vaiACreazioneAttivitaAction" style="-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+
         <!-- Sezione 1: Tabella attività in scadenza -->
         <VBox spacing="8.0">
             <children>
-                <Label text="Attività più Urgenti (Scadenza Imminente)">
+                <Label text="Attività più urgenti(con scadenza imminente)">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
@@ -43,7 +47,7 @@
         <!-- Sezione 2: Tabella attività completate di recente -->
         <VBox spacing="8.0">
             <children>
-                <Label text="Attività Completate di Recente">
+                <Label text="Attività completate di recente">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
@@ -54,7 +58,7 @@
                     </columnResizePolicy>
                     <columns>
                         <TableColumn fx:id="colTitleDone" prefWidth="250.0" text="Titolo" />
-                        <TableColumn fx:id="colCompletionDate" prefWidth="150.0" text="Data Completamento" />
+                        <TableColumn fx:id="colCompletionDate" prefWidth="150.0" text="Data completamento" />
                         <TableColumn fx:id="colCategoryDone" prefWidth="200.0" text="Categoria" />
                     </columns>
                 </TableView>

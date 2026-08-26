@@ -25,7 +25,7 @@ public class UtenteDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     // Leggiamo l'id dal database (assicurati che la colonna si chiami 'id' o 'id_utente')
-                    int id = resultSet.getInt("id"); 
+                    int id = resultSet.getInt("id_utente"); 
                     
                     return new Utente(
                         id,

@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * Data Access Object per l'entità Attivita. Gestisce la persistenza e le query
  * sul database MySQL tramite JDBC (PreparedStatement).
+ * AGGIORNATO: Sincronizzato con i nuovi costruttori di Dominio (inserimento ID Priorita).
  */
 public class AttivitaDAO {
 
@@ -64,9 +65,9 @@ public class AttivitaDAO {
      */
     public List<Attivita> getAttivitaUrgenti(int idUtente) {
         List<Attivita> lista = new ArrayList<>();
-        // Specifichiamo l'id attività in modo sicuro con un alias se la PK ha un nome specifico
+        // FIX: Aggiunto p.id_priorita nella SELECT per poterlo passare al costruttore
         String query = "SELECT a.id_attivita AS id_att, a.titolo, a.descrizione, a.data_scadenza, a.data_completamento, a.completata, "
-                + "c.id_categoria, c.nome_categoria, c.id_utente as cat_utente, p.livello "
+                + "c.id_categoria, c.nome_categoria, c.id_utente as cat_utente, p.id_priorita, p.livello "
                 + "FROM attivita a "
                 + "LEFT JOIN categoria c ON a.id_categoria = c.id_categoria "
                 + "INNER JOIN priorita p ON a.id_priorita = p.id_priorita "
@@ -97,8 +98,10 @@ public class AttivitaDAO {
                     int catUtente = rs.getInt("cat_utente");
                     Categoria categoria = new Categoria(idCat, nomeCat, catUtente);
 
+                    // FIX: Ora peschiamo anche l'ID della priorità e lo passiamo al costruttore
+                    int idPrio = rs.getInt("id_priorita");
                     String livelloPrio = rs.getString("livello");
-                    Priorita priorita = new Priorita(livelloPrio);
+                    Priorita priorita = new Priorita(idPrio, livelloPrio);
 
                     Attivita attivita = new Attivita(id, titolo, descrizione, dataScadenza, dataCompletamento, completata, null, categoria, priorita);
                     lista.add(attivita);
@@ -116,8 +119,9 @@ public class AttivitaDAO {
      */
     public List<Attivita> getAttivitaCompletateRecenti(int idUtente) {
         List<Attivita> lista = new ArrayList<>();
+        // FIX: Aggiunto p.id_priorita nella SELECT
         String query = "SELECT a.id_attivita AS id_att, a.titolo, a.descrizione, a.data_scadenza, a.data_completamento, a.completata, "
-                + "c.id_categoria, c.nome_categoria, c.id_utente as cat_utente, p.livello "
+                + "c.id_categoria, c.nome_categoria, c.id_utente as cat_utente, p.id_priorita, p.livello "
                 + "FROM attivita a "
                 + "LEFT JOIN categoria c ON a.id_categoria = c.id_categoria "
                 + "INNER JOIN priorita p ON a.id_priorita = p.id_priorita "
@@ -147,8 +151,10 @@ public class AttivitaDAO {
                     int catUtente = rs.getInt("cat_utente");
                     Categoria categoria = new Categoria(idCat, nomeCat, catUtente);
 
+                    // FIX: inserito l'ID della priorità per il costruttore a 2 parametri
+                    int idPrio = rs.getInt("id_priorita");
                     String livelloPrio = rs.getString("livello");
-                    Priorita priorita = new Priorita(livelloPrio);
+                    Priorita priorita = new Priorita(idPrio, livelloPrio);
 
                     Attivita attivita = new Attivita(id, titolo, descrizione, dataScadenza, dataCompletamento, completata, null, categoria, priorita);
                     lista.add(attivita);

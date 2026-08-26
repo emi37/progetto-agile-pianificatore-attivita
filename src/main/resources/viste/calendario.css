@@ -1,0 +1,23 @@
+/* Foglio di stile dedicato al calendario (Epica 4) */
+.root {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 30px;
+}
+
+/* Stile per il pannello dei filtri rapidi */
+.filtri-box {
+    -fx-background-color: #ffffff;
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 6px;
+}
+
+/* Stile del contenitore principale della griglia del calendario */
+.calendario-grid-container {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);
+}

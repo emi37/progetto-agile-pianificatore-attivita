@@ -24,14 +24,14 @@ public class HomeController implements Initializable {
 
     @FXML private Label benvenutoLabel;
 
-    // --- Elementi FXML per la Tabella Attività Urgenti ---
+    // ---FXML per la tabella delle attività urgenti---
     @FXML private TableView<Attivita> tabellaAttivitaUrgenti;
     @FXML private TableColumn<Attivita, String> colTitle;
     @FXML private TableColumn<Attivita, String> colDeadline;
     @FXML private TableColumn<Attivita, String> colCategory;
     @FXML private TableColumn<Attivita, String> colPriority;
 
-    // --- Elementi FXML per la Tabella Attività Completate ---
+      // --- altri elementi FXML ma per la tabella adttività completate---
     @FXML private TableView<Attivita> tabellaAttivitaCompletate;
     @FXML private TableColumn<Attivita, String> colTitleDone;
     @FXML private TableColumn<Attivita, String> colCompletionDate;
@@ -41,26 +41,37 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // L'aggiunta del Try-Catch qui è vitale: se i dati falliscono, la finestra si apre comunque
-        // e stampa il VERO errore nella console di NetBeans permettendoci di risolverlo.
+        
         try {
             this.attivitaDAO = new AttivitaDAO();
             Utente utente = ViewDispatcher.getInstance().getUtenteLoggato();
             
             if (utente != null) {
-                // ATTENZIONE: Se getUsername() o getId() sono rossi, significa che Hasan 
-                // li ha chiamati diversamente (es. getNome() o getIdUtente()).
+                 
                 this.benvenutoLabel.setText("Benvenuto nella tua home personale, " + utente.getUsername() + "!");
                 
                 configuraColonne();
                 caricaDatiNelleTabelle(utente.getId());
             } else {
-                this.benvenutoLabel.setText("Benvenuto! (Nessun utente rilevato in sessione)");
+                this.benvenutoLabel.setText("Benvenuto!(Nessun utente rilevato in sessione)");
             }
         } catch (Exception e) {
-            System.out.println("====== ATTENZIONE: ERRORE NELLA DASHBOARD ======");
+            System.out.println("ERRORE NELLa DASHBOARD");
             e.printStackTrace();
         }
+        tabellaAttivitaUrgenti.setOnMouseClicked(event -> {
+            
+            // controllo sul doppio click
+            if (event.getClickCount() == 2) { 
+                
+                // estraggo l'oggetto attivita della riga che h cliccato
+                Attivita attivitaCliccata = tabellaAttivitaUrgenti.getSelectionModel().getSelectedItem();
+                              if (attivitaCliccata != null) {
+                                ViewDispatcher.getInstance().setAttivitaSelezionata(attivitaCliccata);
+                                    ViewDispatcher.getInstance().modificaAttivitaView();
+                }
+            }
+        });
     }
 
     private void configuraColonne() {
@@ -73,7 +84,6 @@ public class HomeController implements Initializable {
             return new SimpleStringProperty("");
         });
         
-        // ATTENZIONE: Se getNomeCategoria() o getLivello() sono rossi, modifica il nome del metodo
         this.colCategory.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategoria().getNomeCategoria()));
         this.colPriority.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPriorita().getLivello()));
 

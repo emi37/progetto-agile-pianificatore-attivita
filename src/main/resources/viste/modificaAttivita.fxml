@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.ModificaAttivitaController">
+    <padding>
+        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+    </padding>
+    <children>
+        <Label text="Gestione attività (modifica ed elimina)">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+        
+        <TextField fx:id="titoloField" prefHeight="40.0" prefWidth="300.0" promptText="Titolo dell'attività" />
+        <DatePicker fx:id="scadenzaPicker" prefHeight="40.0" prefWidth="300.0" promptText="Data di scadenza" />
+        
+        <ComboBox fx:id="categoriaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona la categoria" />
+        <ComboBox fx:id="prioritaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona priorità" />
+        
+        <Label fx:id="erroreLabel" textFill="RED">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+        
+        <HBox alignment="CENTER" spacing="15.0">
+            <children>
+                <Button onAction="#salvaModificheAction" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Salva Modifiche" />
+                <Button onAction="#eliminaAction" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Elimina Attività" />
+                <Button onAction="#annullaAction" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Annulla" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

@@ -165,4 +165,61 @@ public class AttivitaDAO {
         }
         return lista;
     }
+    
+    /**
+     * Aggiorna un'attività esistente nel database sovrascrivendo i campi.
+     */
+    public boolean aggiornaAttivita(Attivita attivita, int idCategoria, int idPriorita) {
+        String query = "UPDATE attivita SET titolo = ?, descrizione = ?, data_scadenza = ?, data_completamento = ?, completata = ?, id_categoria = ?, id_priorita = ? WHERE id_attivita = ?";
+        
+        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            statement.setString(1, attivita.getTitolo());
+            statement.setString(2, attivita.getDescrizione());
+
+            if (attivita.getDataScadenza() != null) {
+                statement.setTimestamp(3, Timestamp.valueOf(attivita.getDataScadenza().atStartOfDay()));
+            } else {
+                statement.setNull(3, Types.TIMESTAMP);
+            }
+
+            if (attivita.getDataCompletamento() != null) {
+                statement.setTimestamp(4, Timestamp.valueOf(attivita.getDataCompletamento().atStartOfDay()));
+            } else {
+                statement.setNull(4, Types.TIMESTAMP);
+            }
+
+            statement.setBoolean(5, attivita.isCompletata());
+            statement.setInt(6, idCategoria);
+            statement.setInt(7, idPriorita);
+            
+            // Il parametro 8 è l'ID dell'attività (clausola WHERE) che permette a MySQL di trovare la riga esatta!
+            statement.setInt(8, attivita.getId());
+
+            int righeAggiornate = statement.executeUpdate();
+            return righeAggiornate > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Elimina definitivamente un'attività dal database tramite il suo ID primario.
+     */
+    public boolean eliminaAttivita(int idAttivita) {
+        String query = "DELETE FROM attivita WHERE id_attivita=?";
+        
+        try (Connection connection = DatabaseManager.getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            statement.setInt(1, idAttivita);
+            int righeEliminate = statement.executeUpdate();
+            return righeEliminate > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

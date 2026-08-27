@@ -1,5 +1,6 @@
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view;
 
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Attivita;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Utente;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -138,4 +139,32 @@ public class ViewDispatcher {
             e.printStackTrace();
         }
     }   
+    
+    
+    // 1. Variabile per trasportare l'attività cliccata dalla Home alla schermata di modifica
+    private Attivita attivitaSelezionata;
+
+    public Attivita getAttivitaSelezionata() {
+        return attivitaSelezionata;
+    }
+
+    public void setAttivitaSelezionata(Attivita attivitaSelezionata) {
+        this.attivitaSelezionata = attivitaSelezionata;
+    }
+
+    /**
+     * Metodo per navigare verso la schermata di Modifica/Cancellazione
+     */
+    public void modificaAttivitaView() {
+        try {
+            // Assicurati che l'import di javafx.scene.Parent sia presente (lo è già per le altre viste)
+            Parent modificaRoot = javafx.fxml.FXMLLoader.load(getClass().getResource("/viste/modificaAttivita.fxml"));
+            Scene scene = new Scene(modificaRoot);
+            stage.setScene(scene);
+            stage.setTitle("Gestione Attività");
+            stage.show();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

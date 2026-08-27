@@ -167,4 +167,17 @@ public class ViewDispatcher {
             e.printStackTrace();
         }
     }
+    
+    // Metodo per la visualizzazione del calendario
+    public void calendarioView() {
+    try {
+        Parent calendarioRoot = FXMLLoader.load(getClass().getResource("/viste/calendario.fxml"));
+        Scene scene = new Scene(calendarioRoot);
+        stage.setScene(scene);
+        stage.setTitle("Calendario Impegni - Duff Tech");
+        stage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
 }

@@ -14,7 +14,7 @@
         <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
     </padding>
     <children>
-        <!-- Intestazione e Bottone Creazione -->
+        <!-- Intestazione, Benvenuto e Bottoni in alto -->
         <HBox alignment="CENTER_LEFT" spacing="20.0">
             <children>
                 <Label fx:id="benvenutoLabel" text="Dashboard di Riepilogo">
@@ -24,11 +24,15 @@
                 </Label>
                 <VBox HBox.hgrow="ALWAYS" />
              
-                <Button onAction="#vaiACreazioneAttivitaAction" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Aggiungi/crea una nuova attivita alla lista  " />
+                <!-- Pulsante per aprire il Calendario (Epica 4) -->
+                <Button onAction="#vaiACalendarioAction" style="-fx-background-color: #1cc88a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text=" Visualizza Calendario " />
+                
+                <!-- Pulsante esistente del compagno per la creazione -->
+                <Button onAction="#vaiACreazioneAttivitaAction" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Aggiungi/crea una nuova attivita alla lista" />
             </children>
         </HBox>
 
-        <!-- Sezione Analisi Mensile/Settimanale (MODIFICATA: Più piccola e a sinistra) -->
+        <!-- Sezione Analisi Mensile/Settimanale -->
         <HBox alignment="CENTER_LEFT">
             <children>
                 <HBox alignment="CENTER" spacing="40.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #d1d3e2; -fx-border-radius: 10;">

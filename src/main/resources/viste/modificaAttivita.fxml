@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -15,17 +16,24 @@
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
     </padding>
     <children>
-        <Label text="Gestione attività (modifica ed elimina)">
+        <Label text="Gestione Attività (Modifica/Elimina)">
             <font>
                 <Font name="System Bold" size="24.0" />
             </font>
         </Label>
         
-        <TextField fx:id="titoloField" prefHeight="40.0" prefWidth="300.0" promptText="Titolo dell'attività" />
-        <DatePicker fx:id="scadenzaPicker" prefHeight="40.0" prefWidth="300.0" promptText="Data di scadenza" />
+        <TextField fx:id="titoloField" prefHeight="40.0" prefWidth="300.0" promptText="Titolo dell'attività (Obbligatorio)" />
+        <DatePicker fx:id="scadenzaPicker" prefHeight="40.0" prefWidth="300.0" promptText="Data di Scadenza" />
         
-        <ComboBox fx:id="categoriaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona la categoria" />
-        <ComboBox fx:id="prioritaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona priorità" />
+        <ComboBox fx:id="categoriaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona Categoria" />
+        <ComboBox fx:id="prioritaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona Priorità" />
+        
+        <!-- NUOVA CHECKBOX PER CONCLUDERE L'EPICA 3 -->
+        <CheckBox fx:id="completataCheckBox" text="Segna come Completata" textFill="#28a745">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </CheckBox>
         
         <Label fx:id="erroreLabel" textFill="RED">
             <font>

@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
-
+ 
 public class CreazioneAttivitaController implements Initializable {
 
     @FXML private TextField titoloField;

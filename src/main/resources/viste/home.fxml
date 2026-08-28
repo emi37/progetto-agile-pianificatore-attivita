@@ -5,61 +5,90 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.HomeController">
+<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: #f4f6f9;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.HomeController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
     </padding>
     <children>
-        <Label fx:id="benvenutoLabel" text="Benvenuto nella tua home personale">
-            <font>
-                <Font name="System Bold" size="22.0" />
-            </font>
-        </Label>
-
-             <!-- Bottone per creare una attivta -->
-        <Button text="Crea una nuova attività" onAction="#vaiACreazioneAttivitaAction" style="-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
-
-        <!-- Sezione 1: Tabella attività in scadenza -->
-        <VBox spacing="8.0">
+        <!-- Intestazione e Bottone Creazione -->
+        <HBox alignment="CENTER_LEFT" spacing="20.0">
             <children>
-                <Label text="Attività più urgenti(con scadenza imminente)">
+                <Label fx:id="benvenutoLabel" text="Dashboard di Riepilogo">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="24.0" />
                     </font>
                 </Label>
-                <TableView fx:id="tabellaAttivitaUrgenti" prefHeight="200.0" prefWidth="600.0">
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                    </columnResizePolicy>
+                <VBox HBox.hgrow="ALWAYS" />
+             
+                <Button onAction="#vaiACreazioneAttivitaAction" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Aggiungi/crea una nuova attivita alla lista  " />
+            </children>
+        </HBox>
+
+        <!-- Sezione Analisi Mensile/Settimanale (MODIFICATA: Più piccola e a sinistra) -->
+        <HBox alignment="CENTER_LEFT">
+            <children>
+                <HBox alignment="CENTER" spacing="40.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #d1d3e2; -fx-border-radius: 10;">
+                    <padding>
+                        <Insets bottom="15.0" left="30.0" right="30.0" top="15.0" />
+                    </padding>
+                    <children>
+                        <VBox alignment="CENTER">
+                            <Label text="Completate questa settimana:" textFill="#5a5c69">
+                                <font><Font name="System Bold" size="14.0" /></font>
+                            </Label>
+                            <Label fx:id="statSettimanaLabel" text="0" textFill="#1cc88a">
+                                <font><Font name="System Bold" size="24.0" /></font>
+                            </Label>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                            <Label text="Completate questo mese:" textFill="#5a5c69">
+                                <font><Font name="System Bold" size="14.0" /></font>
+                            </Label>
+                            <Label fx:id="statMeseLabel" text="0" textFill="#4e73df">
+                                <font><Font name="System Bold" size="24.0" /></font>
+                            </Label>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+
+        <!-- Tabella Attività Urgenti -->
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Label text="Attività più urgenti (Clicca per gestire)">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+                <TableView fx:id="urgentiTable" prefHeight="200.0">
                     <columns>
-                        <TableColumn fx:id="colTitle" prefWidth="180.0" text="Titolo" />
-                        <TableColumn fx:id="colDeadline" prefWidth="120.0" text="Scadenza" />
-                        <TableColumn fx:id="colCategory" prefWidth="150.0" text="Categoria" />
-                        <TableColumn fx:id="colPriority" prefWidth="130.0" text="Priorità" />
+                        <TableColumn fx:id="titoloUrgentiCol" prefWidth="200.0" text="Titolo" />
+                        <TableColumn fx:id="scadenzaUrgentiCol" prefWidth="150.0" text="Scadenza" />
+                        <TableColumn fx:id="categoriaUrgentiCol" prefWidth="150.0" text="Categoria" />
+                        <TableColumn fx:id="prioritaUrgentiCol" prefWidth="100.0" text="Priorità" />
                     </columns>
                 </TableView>
             </children>
         </VBox>
 
-        <!-- Sezione 2: Tabella attività completate di recente -->
-        <VBox spacing="8.0">
+        <!-- Tabella Attività Completate -->
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
             <children>
                 <Label text="Attività completate di recente">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="16.0" />
                     </font>
                 </Label>
-                <TableView fx:id="tabellaAttivitaCompletate" prefHeight="180.0" prefWidth="600.0">
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                    </columnResizePolicy>
+                <TableView fx:id="completateTable" prefHeight="150.0">
                     <columns>
-                        <TableColumn fx:id="colTitleDone" prefWidth="250.0" text="Titolo" />
-                        <TableColumn fx:id="colCompletionDate" prefWidth="150.0" text="Data completamento" />
-                        <TableColumn fx:id="colCategoryDone" prefWidth="200.0" text="Categoria" />
+                        <TableColumn fx:id="titoloCompletateCol" prefWidth="200.0" text="Titolo" />
+                        <TableColumn fx:id="dataCompletamentoCol" prefWidth="150.0" text="Data Completamento" />
+                        <TableColumn fx:id="categoriaCompletateCol" prefWidth="150.0" text="Categoria" />
                     </columns>
                 </TableView>
             </children>

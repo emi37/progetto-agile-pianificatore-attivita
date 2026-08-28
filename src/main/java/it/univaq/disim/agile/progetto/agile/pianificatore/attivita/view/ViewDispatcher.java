@@ -124,21 +124,22 @@ public class ViewDispatcher {
         }
     }
 
-    /**
+   /**
      * Metodo per navigare verso la schermata di Creazione di una nuova Attività.
-     * Allineato perfettamente alla logica strutturale di homeView().
+     * Propaga l'eccezione personalizzata ViewException in caso di errore di caricamento.
      */
-    public void creazioneAttivitaView() {
+    public void creazioneAttivitaView() throws ViewException {
         try {
-            Parent creazioneRoot = FXMLLoader.load(getClass().getResource("/viste/creazioneAttivita.fxml"));
-            Scene scene = new Scene(creazioneRoot);
+            Parent creazioneRoot = javafx.fxml.FXMLLoader.load(getClass().getResource("/viste/creazioneAttivita.fxml"));
+            javafx.scene.Scene scene = new javafx.scene.Scene(creazioneRoot);
             stage.setScene(scene);
-            stage.setTitle("Crea Nuova Attività");
+            stage.setTitle("Crea una nuova attivita ");
             stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (java.io.IOException e) {
+            // Incapsuliamo l'errore nativo nella nostra eccezione architetturale
+            throw new ViewException("Errore nel caricamento di file .fxml", e);
         }
-    }   
+    }
     
     
     // 1. Variabile per trasportare l'attività cliccata dalla Home alla schermata di modifica

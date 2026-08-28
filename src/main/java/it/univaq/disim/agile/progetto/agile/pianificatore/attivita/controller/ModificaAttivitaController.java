@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -33,6 +34,7 @@ public class ModificaAttivitaController implements Initializable {
     @FXML private DatePicker scadenzaPicker;
     @FXML private ComboBox<String> categoriaComboBox;
     @FXML private ComboBox<String> prioritaComboBox;
+    @FXML private CheckBox completataCheckBox;
     @FXML private Label erroreLabel;
 
     private AttivitaDAO attivitaDAO;
@@ -47,7 +49,6 @@ public class ModificaAttivitaController implements Initializable {
             this.prioritaComboBox.getItems().addAll("Bassa", "Media", "Alta");
             this.erroreLabel.setText("");
 
-            // Recupero dell'attività cliccata salvata nella sessione del Dispatcher
             this.attivitaInModifica = ViewDispatcher.getInstance().getAttivitaSelezionata();
 
             if (this.attivitaInModifica != null) {
@@ -55,6 +56,9 @@ public class ModificaAttivitaController implements Initializable {
                 this.scadenzaPicker.setValue(this.attivitaInModifica.getDataScadenza());
                 this.categoriaComboBox.setValue(this.attivitaInModifica.getCategoria().getNomeCategoria());
                 this.prioritaComboBox.setValue(this.attivitaInModifica.getPriorita().getLivello());
+                
+                // Binding dei dati: pre-compila la checkbox se l'attività era già completata
+                this.completataCheckBox.setSelected(this.attivitaInModifica.isCompletata());
             } else {
                 this.erroreLabel.setText("Errore di caricamento attività.");
             }
@@ -79,7 +83,6 @@ public class ModificaAttivitaController implements Initializable {
                 return;
             }
 
-            // Mappatura dinamica Categoria
             int idCategoriaReale = 4;
             switch (this.categoriaComboBox.getValue()) {
                 case "Studio":   idCategoriaReale = 4; break;
@@ -89,7 +92,6 @@ public class ModificaAttivitaController implements Initializable {
                 case "Finanze":  idCategoriaReale = 8; break;
             }
 
-            // Mappatura dinamica Priorità
             int idPrioritaReale = 3;
             switch (this.prioritaComboBox.getValue()) {
                 case "Bassa": idPrioritaReale = 1; break;
@@ -97,8 +99,22 @@ public class ModificaAttivitaController implements Initializable {
                 case "Alta":  idPrioritaReale = 3; break;
             }
 
+            // 1. Aggiorna i campi di testo nel Dominio
             this.attivitaInModifica.setTitolo(titolo);
             this.attivitaInModifica.setDataScadenza(scadenza);
+            
+            // 2. Verifica lo stato della CheckBox
+            boolean isCompletataOra = this.completataCheckBox.isSelected();
+            this.attivitaInModifica.setCompletata(isCompletataOra);
+            
+            // 3. Gestione automatica della data di completamento
+            if (isCompletataOra && this.attivitaInModifica.getDataCompletamento() == null) {
+                // Se la spuntiamo oggi, assegna la data odierna
+                this.attivitaInModifica.setDataCompletamento(LocalDate.now());
+            } else if (!isCompletataOra) {
+                // Se togliamo la spunta per errore, resetta la data
+                this.attivitaInModifica.setDataCompletamento(null);
+            }
 
             boolean aggiornato = this.attivitaDAO.aggiornaAttivita(this.attivitaInModifica, idCategoriaReale, idPrioritaReale);
 
@@ -115,18 +131,14 @@ public class ModificaAttivitaController implements Initializable {
 
     @FXML
     private void eliminaAction(ActionEvent event) {
-            //  popup di conferma 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Conferma eliminazione");
+        alert.setTitle("Conferma Eliminazione");
         alert.setHeaderText("Sei sicuro di voler eliminare questa attività?");
         alert.setContentText("L'azione è irreversibile e i dati andranno persi.");
 
         Optional<ButtonType> result = alert.showAndWait();
-        
-        // il delete
         if (result.isPresent() && result.get() == ButtonType.OK) {
             boolean eliminato = this.attivitaDAO.eliminaAttivita(this.attivitaInModifica.getId());
-            
             if (eliminato) {
                 try {
                     ViewDispatcher.getInstance().homeView();
@@ -134,7 +146,7 @@ public class ModificaAttivitaController implements Initializable {
                     e.printStackTrace();
                 }
             } else {
-                this.erroreLabel.setText("Errore durante l'eliminazione dal db");
+                this.erroreLabel.setText("Errore durante l'eliminazione.");
             }
         }
     }

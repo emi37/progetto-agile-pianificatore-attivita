@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -15,29 +16,34 @@
     </padding>
     <children>
         
-        <!-- Intestazione -->
-        <HBox alignment="CENTER_LEFT" spacing="20.0">
+        <!-- Intestazione solo con il Titolo -->
+        <HBox alignment="CENTER_LEFT">
             <children>
                 <Label text="Calendario Impegni Personali" textFill="#2c3e50">
                     <font>
                         <Font name="System Bold" size="22.0" />
                     </font>
                 </Label>
-                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS" spacing="10.0">
-                    <children>
-                        <Label text="Visualizzazione:" />
-                        <ComboBox fx:id="vistaComboBox" prefWidth="150.0" promptText="Mese Corrente" />
-                    </children>
-                </HBox>
             </children>
         </HBox>
 
-        <!-- Filtri -->
+        <!-- Filtri Rapidi + Visualizzazione uniti nello stesso box -->
         <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: white; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #d1d3e2; -fx-border-radius: 8;">
             <children>
                 <Label text="Filtri Rapidi:" style="-fx-font-weight: bold;" />
                 <CheckBox fx:id="filtroPrioritaAltaCheckBox" text="Solo Priorità Alta" onAction="#applicaFiltriAction" />
                 <Button text="Reset Filtri" onAction="#resetFiltriAction" style="-fx-background-color: #e2e8f0; -fx-cursor: hand;" />
+                
+                <!-- Spacer elastico per spingere la visualizzazione a destra dentro il box -->
+                <Pane HBox.hgrow="ALWAYS" />
+                
+                <!-- Visualizzazione spostata dentro il box dei filtri -->
+                <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                    <children>
+                        <Label text="Visualizzazione:" />
+                        <ComboBox fx:id="vistaComboBox" prefWidth="150.0" promptText="Mese Corrente" />
+                    </children>
+                </HBox>
             </children>
         </HBox>
 

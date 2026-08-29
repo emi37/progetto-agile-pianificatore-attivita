@@ -65,19 +65,23 @@ public class CalendarioController implements Initializable {
         List<Attivita> attivitaFiltrate = tutteLeAttivita;
         if (tutteLeAttivita != null && soloAlta) {
             attivitaFiltrate = tutteLeAttivita.stream()
-                .filter(a -> "ALTA".equalsIgnoreCase(String.valueOf(a.getPriorita())))
+                .filter(a -> {
+                    String pStr = estraiPrioritaStringa(a);
+                    return "ALTA".equalsIgnoreCase(pStr) || "Alta".equalsIgnoreCase(pStr);
+                })
                 .collect(Collectors.toList());
         }
 
-        // Intestazione con pulsanti di navigazione Mese Precedente / Successivo
+        String vistaSelezionata = vistaComboBox.getValue();
+
+        // Intestazione con pulsanti di navigazione dinamici
         HBox navBox = new HBox(15);
         navBox.setAlignment(Pos.CENTER);
         
-        Button btnIndietro = new Button("< Mese Prec.");
-        btnIndietro.setStyle("-fx-background-color: #e2e8f0; -fx-cursor: hand; -fx-font-weight: bold;");
+        Button btnIndietro = new Button(vistaSelezionata.equals("Settimana Corrente") ? "< Sett. Prec." : "< Mese Prec.");
+        btnIndietro.getStyleClass().add("nav-button");
         btnIndietro.setOnAction(e -> {
-            String vista = vistaComboBox.getValue();
-            if ("Settimana Corrente".equals(vista)) {
+            if ("Settimana Corrente".equals(vistaComboBox.getValue())) {
                 dataCorrente = dataCorrente.minusWeeks(1);
             } else {
                 dataCorrente = dataCorrente.minusMonths(1);
@@ -86,16 +90,21 @@ public class CalendarioController implements Initializable {
         });
 
         meseAnnoLabel = new Label();
-        meseAnnoLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        meseAnnoLabel.getStyleClass().add("mese-anno-label");
         
-        String nomeMese = dataCorrente.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN);
-        meseAnnoLabel.setText(nomeMese.toUpperCase() + " " + dataCorrente.getYear());
+        if ("Settimana Corrente".equals(vistaSelezionata)) {
+            LocalDate inizioSet = dataCorrente.minusDays(dataCorrente.getDayOfWeek().getValue() - 1);
+            LocalDate fineSet = inizioSet.plusDays(6);
+            meseAnnoLabel.setText("SETTIMANA: " + inizioSet.getDayOfMonth() + " " + inizioSet.getMonth().getDisplayName(TextStyle.SHORT, Locale.ITALIAN) + " - " + fineSet.getDayOfMonth() + " " + fineSet.getMonth().getDisplayName(TextStyle.SHORT, Locale.ITALIAN) + " " + fineSet.getYear());
+        } else {
+            String nomeMese = dataCorrente.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN);
+            meseAnnoLabel.setText(nomeMese.toUpperCase() + " " + dataCorrente.getYear());
+        }
 
-        Button btnAvanti = new Button("Mese Succ. >");
-        btnAvanti.setStyle("-fx-background-color: #e2e8f0; -fx-cursor: hand; -fx-font-weight: bold;");
+        Button btnAvanti = new Button(vistaSelezionata.equals("Settimana Corrente") ? "Sett. Succ. >" : "Mese Succ. >");
+        btnAvanti.getStyleClass().add("nav-button");
         btnAvanti.setOnAction(e -> {
-            String vista = vistaComboBox.getValue();
-            if ("Settimana Corrente".equals(vista)) {
+            if ("Settimana Corrente".equals(vistaComboBox.getValue())) {
                 dataCorrente = dataCorrente.plusWeeks(1);
             } else {
                 dataCorrente = dataCorrente.plusMonths(1);
@@ -112,22 +121,20 @@ public class CalendarioController implements Initializable {
         gridPane.setVgap(8);
         gridPane.setAlignment(Pos.CENTER);
 
-        String vistaSelezionata = vistaComboBox.getValue();
-        
         if ("Settimana Corrente".equals(vistaSelezionata)) {
             LocalDate inizioSettimana = dataCorrente.minusDays(dataCorrente.getDayOfWeek().getValue() - 1);
             String[] giorniSettimana = {"Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"};
             
             for (int i = 0; i < 7; i++) {
                 LocalDate giornoCorrente = inizioSettimana.plusDays(i);
-                VBox giornoBox = creaBoxGiorno(giornoCorrente, giorniSettimana[i] + " " + giornoCorrente.getDayOfMonth(), attivitaFiltrate);
+                VBox giornoBox = creaBoxGiorno(giornoCorrente, giorniSettimana[i] + "\n" + giornoCorrente.getDayOfMonth(), attivitaFiltrate);
                 gridPane.add(giornoBox, i, 0);
             }
         } else {
             String[] giorniAbbrev = {"lu", "ma", "me", "gi", "ve", "sa", "do"};
             for (int i = 0; i < giorniAbbrev.length; i++) {
                 Label lbl = new Label(giorniAbbrev[i]);
-                lbl.setStyle("-fx-font-weight: bold; -fx-text-fill: #6c757d; -fx-font-size: 13px;");
+                lbl.getStyleClass().add("giorno-intestazione-label");
                 lbl.setAlignment(Pos.CENTER);
                 gridPane.add(lbl, i, 0);
             }
@@ -159,7 +166,7 @@ public class CalendarioController implements Initializable {
     private VBox creaBoxGiorno(LocalDate data, String testoVisualizzato, List<Attivita> listaAttivita) {
         VBox box = new VBox(3);
         box.setAlignment(Pos.CENTER);
-        box.setPrefSize(70, 60);
+        box.setPrefSize(80, 65);
         
         boolean haAttivita = false;
         if (listaAttivita != null) {
@@ -167,26 +174,48 @@ public class CalendarioController implements Initializable {
                 .anyMatch(a -> a.getDataScadenza() != null && a.getDataScadenza().equals(data));
         }
 
-        // Stile pulito standard o verde se ci sono attività (nessun blu forzato sul giorno corrente)
         if (haAttivita) {
-            box.setStyle("-fx-background-color: #1cc88a; -fx-background-radius: 6; -fx-cursor: hand;");
+            box.getStyleClass().add("giorno-box-attivo");
         } else {
-            box.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e3e6f0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-cursor: hand;");
+            box.getStyleClass().add("giorno-box-vuoto");
         }
 
         Label lbl = new Label(testoVisualizzato);
-        lbl.setStyle(haAttivita ? "-fx-text-fill: white; -fx-font-weight: bold;" : "-fx-text-fill: #333333;");
+        lbl.setAlignment(Pos.CENTER);
+        if (haAttivita) {
+            lbl.getStyleClass().add("giorno-label-attivo");
+        } else {
+            lbl.getStyleClass().add("giorno-label-vuoto");
+        }
         box.getChildren().add(lbl);
 
         if (haAttivita) {
             Label badge = new Label("●");
-            badge.setStyle("-fx-text-fill: #fff; -fx-font-size: 10px;");
+            badge.getStyleClass().add("giorno-badge");
             box.getChildren().add(badge);
         }
 
         box.setOnMouseClicked(event -> mostraDettaglioGiorno(data, listaAttivita));
 
         return box;
+    }
+
+    private String estraiPrioritaStringa(Attivita a) {
+        try {
+            Object p = a.getPriorita();
+            if (p != null) {
+                try {
+                    java.lang.reflect.Method m = p.getClass().getMethod("getLivello");
+                    Object val = m.invoke(p);
+                    if (val != null) return val.toString();
+                } catch (Exception ex) {
+                    return p.toString();
+                }
+            }
+        } catch (Exception e) {
+            // fallback
+        }
+        return "Normale";
     }
 
     private void mostraDettaglioGiorno(LocalDate data, List<Attivita> listaAttivita) {
@@ -205,27 +234,7 @@ public class CalendarioController implements Initializable {
             StringBuilder sb = new StringBuilder();
             for (Attivita a : attivitaDelGiorno) {
                 String titolo = a.getTitolo() != null ? a.getTitolo() : "Senza titolo";
-                String prioritaStr = "Normale";
-
-                try {
-                    Object p = a.getPriorita();
-                    if (p != null) {
-                        // Proviamo a invocare direttamente getLivello() se l'oggetto priorità lo possiede
-                        try {
-                            java.lang.reflect.Method m = p.getClass().getMethod("getLivello");
-                            Object val = m.invoke(p);
-                            if (val != null) {
-                                prioritaStr = val.toString();
-                            }
-                        } catch (Exception ex) {
-                            // Fallback nel caso non esista getLivello
-                            prioritaStr = p.toString();
-                        }
-                    }
-                } catch (Exception e) {
-                    prioritaStr = "Media";
-                }
-
+                String prioritaStr = estraiPrioritaStringa(a);
                 sb.append("• ").append(titolo).append(" (Priorità: ").append(prioritaStr).append(")\n");
             }
             alert.setContentText(sb.toString());

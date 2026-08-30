@@ -16,23 +16,29 @@
     </padding>
     <children>
         
-        <!-- Intestazione solo con il Titolo -->
+        <!-- intestazione con titolo e il bottone per tornare alla home -->
         <HBox alignment="CENTER_LEFT">
             <children>
-                <Label text="Calendario Impegni Personali" textFill="#2c3e50">
+                <Label text="Calendario impegni personali" textFill="#2c3e50">
                     <font>
                         <Font name="System Bold" size="22.0" />
                     </font>
                 </Label>
+                
+                <!-- Spacer elastico per spingere il bottone tutto a destra -->
+                <Pane HBox.hgrow="ALWAYS" />
+                
+            <!-- Bottone per tornare alla dashboard/home-->
+                <Button onAction="#tornaDashboardAction" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Torna alla home/dashboard" />
             </children>
         </HBox>
 
-        <!-- Filtri Rapidi + Visualizzazione uniti nello stesso box -->
+        <!-- filtro e la visualizzazione nello stesso box -->
         <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: white; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #d1d3e2; -fx-border-radius: 8;">
             <children>
-                <Label text="Filtri Rapidi:" style="-fx-font-weight: bold;" />
-                <CheckBox fx:id="filtroPrioritaAltaCheckBox" text="Solo Priorità Alta" onAction="#applicaFiltriAction" />
-                <Button text="Reset Filtri" onAction="#resetFiltriAction" style="-fx-background-color: #e2e8f0; -fx-cursor: hand;" />
+                <Label style="-fx-font-weight: bold;" text="Filtro prior. alta" />
+                <CheckBox fx:id="filtroPrioritaAltaCheckBox" onAction="#applicaFiltriAction" text="Solo Priorità Alta" />
+                <Button onAction="#resetFiltriAction" style="-fx-background-color: #e2e8f0; -fx-cursor: hand;" text="Reset filtro" />
                 
                 <!-- Spacer elastico per spingere la visualizzazione a destra dentro il box -->
                 <Pane HBox.hgrow="ALWAYS" />
@@ -48,8 +54,7 @@
         </HBox>
 
         <!-- Container Calendario con Sfondo Chiaro -->
-        <VBox fx:id="calendarioContainer" alignment="CENTER" spacing="15.0" prefHeight="450.0" prefWidth="650.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-border-color: #d1d3e2; -fx-border-radius: 10;">
-        </VBox>
+        <VBox fx:id="calendarioContainer" alignment="CENTER" prefHeight="450.0" prefWidth="650.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-border-color: #d1d3e2; -fx-border-radius: 10;" />
 
     </children>
 </VBox>

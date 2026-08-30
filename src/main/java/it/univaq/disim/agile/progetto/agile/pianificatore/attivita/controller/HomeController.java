@@ -58,7 +58,7 @@ public class HomeController implements Initializable {
         Utente utenteLoggato = ViewDispatcher.getInstance().getUtenteLoggato();
 
         if (utenteLoggato != null) {
-            this.benvenutoLabel.setText("Benvenuto nella tua Dashboard, " + utenteLoggato.getUsername() + "!");
+            this.benvenutoLabel.setText("Benvenuto nella tua home personale, " + utenteLoggato.getUsername() );
 
             // 1. Configurazione colonne Tabella Urgenti
             titoloUrgentiCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitolo()));

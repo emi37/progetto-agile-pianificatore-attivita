@@ -17,7 +17,7 @@
         <!-- Intestazione, Benvenuto e Bottoni in alto -->
         <HBox alignment="CENTER_LEFT" spacing="20.0">
             <children>
-                <Label fx:id="benvenutoLabel" text="Dashboard di Riepilogo">
+                <Label fx:id="benvenutoLabel" text="Dashboard di riepilogo">
                     <font>
                         <Font name="System Bold" size="24.0" />
                     </font>

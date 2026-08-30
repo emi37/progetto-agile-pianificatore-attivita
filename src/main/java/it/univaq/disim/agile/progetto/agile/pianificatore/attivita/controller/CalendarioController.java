@@ -256,4 +256,20 @@ public class CalendarioController implements Initializable {
         dataCorrente = LocalDate.now();
         generaGrigliaCalendario();
     }
+    
+    
+    /**
+     * Gestisce l'evento di click sul bottone "Torna alla Dashboard".
+     * Invoca il Singleton ViewDispatcher per eseguire lo switch della Scena verso la Home.
+     */
+    @FXML
+    private void tornaDashboardAction(javafx.event.ActionEvent event) {
+        try {
+            // Chiamiamo il dispatcher per tornare alla homeView
+            it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher.getInstance().homeView();
+        } catch (Exception e) {
+            System.err.println("Errore durante il ritorno alla Dashboard: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

@@ -191,4 +191,45 @@ public class AttivitaDAO {
             return false;
         }
     }
+    /**
+     * Inserisce l'attività e restituisce l'ID generato da MySQL (fondamentale per collegare le notifiche).
+     */
+    public int inserisciAttivitaRestituendoId(Attivita attivita, int idUtente, int idCategoria, int idPriorita) {
+        String sql = "INSERT INTO attivita (titolo, descrizione, data_scadenza, data_completamento, completata, id_utente, id_categoria, id_priorita) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        // Passiamo RETURN_GENERATED_KEYS a JDBC per dirgli "Ehi, dammi l'ID che hai appena creato!"
+        try (Connection connessione = DatabaseManager.getConnection(); 
+             PreparedStatement ps = connessione.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, attivita.getTitolo());
+            ps.setString(2, attivita.getDescrizione());
+            
+            if (attivita.getDataScadenza() != null) {
+                ps.setTimestamp(3, Timestamp.valueOf(attivita.getDataScadenza().atStartOfDay()));
+            } else {
+                ps.setNull(3, Types.TIMESTAMP);
+            }
+            ps.setNull(4, Types.TIMESTAMP); // È nuova, quindi non completata
+            ps.setBoolean(5, false);
+            ps.setInt(6, idUtente);
+            ps.setInt(7, idCategoria);
+            ps.setInt(8, idPriorita);
+
+            int righeSalvate = ps.executeUpdate();
+            if (righeSalvate > 0) {
+                // Peschiamo l'ID autoincrementale generato dal database
+                try (ResultSet chiaviGenerate = ps.getGeneratedKeys()) {
+                    if (chiaviGenerate.next()) {
+                        return chiaviGenerate.getInt(1); // Restituiamo l'id_attivita
+                    }
+                }
+            }
+            return -1; // Ritorna -1 in caso di errore logico
+        } catch (SQLException e) {
+            System.err.println("Maronn, impossibile generare l'ID durante l'inserimento dell'attività!");
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

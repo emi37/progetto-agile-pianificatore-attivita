@@ -9,7 +9,9 @@ package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller;
  * @author Filippo
  */
 import database.AttivitaDAO;
+import database.NotificaDAO;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Attivita;
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Notifica;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewException;
 import javafx.event.ActionEvent;
@@ -25,6 +27,7 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -35,36 +38,51 @@ public class ModificaAttivitaController implements Initializable {
     @FXML private ComboBox<String> categoriaComboBox;
     @FXML private ComboBox<String> prioritaComboBox;
     @FXML private CheckBox completataCheckBox;
+    
+    // UI Epica 5
+    @FXML private CheckBox promemoriaManualeCheck;
+    @FXML private ComboBox<String> anticipoComboBox;
+    
     @FXML private Label erroreLabel;
 
     private AttivitaDAO attivitaDAO;
+    private NotificaDAO notificaDAO;
     private Attivita attivitaInModifica;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             this.attivitaDAO = new AttivitaDAO();
+            this.notificaDAO = new NotificaDAO();
             
             this.categoriaComboBox.getItems().addAll("Studio", "Lavoro", "Palestra", "Hobby", "Finanze");
             this.prioritaComboBox.getItems().addAll("Bassa", "Media", "Alta");
+            this.anticipoComboBox.getItems().addAll("1 ora prima", "1 giorno prima", "2 giorni prima");
+            
             this.erroreLabel.setText("");
 
             this.attivitaInModifica = ViewDispatcher.getInstance().getAttivitaSelezionata();
 
+            // binding dati iniziali
             if (this.attivitaInModifica != null) {
                 this.titoloField.setText(this.attivitaInModifica.getTitolo());
                 this.scadenzaPicker.setValue(this.attivitaInModifica.getDataScadenza());
                 this.categoriaComboBox.setValue(this.attivitaInModifica.getCategoria().getNomeCategoria());
                 this.prioritaComboBox.setValue(this.attivitaInModifica.getPriorita().getLivello());
-                
-                // Binding dei dati: pre-compila la checkbox se l'attività era già completata
                 this.completataCheckBox.setSelected(this.attivitaInModifica.isCompletata());
             } else {
-                this.erroreLabel.setText("Errore di caricamento attività.");
+                this.erroreLabel.setText("Nessuna attività trovata nel dispatcher.");
             }
         } catch (Exception e) {
+            System.err.println("Errore in fase di init del controller di modifica.");
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void abilitaPromemoriaAction(ActionEvent event) {
+        // toggle tendina
+        this.anticipoComboBox.setDisable(!this.promemoriaManualeCheck.isSelected());
     }
 
     @FXML
@@ -73,6 +91,7 @@ public class ModificaAttivitaController implements Initializable {
             String titolo = this.titoloField.getText();
             LocalDate scadenza = this.scadenzaPicker.getValue();
             
+            // check parametri base
             if (titolo == null || titolo.trim().isEmpty()) {
                 this.erroreLabel.setText("Il Titolo è obbligatorio.");
                 return;
@@ -82,7 +101,13 @@ public class ModificaAttivitaController implements Initializable {
                 this.erroreLabel.setText("Seleziona Categoria e Priorità.");
                 return;
             }
+            
+            if (scadenza == null) {
+                this.erroreLabel.setText("Data scadenza richiesta per i promemoria.");
+                return;
+            }
 
+            // mapping da stringhe a id db
             int idCategoriaReale = 4;
             switch (this.categoriaComboBox.getValue()) {
                 case "Studio":   idCategoriaReale = 4; break;
@@ -99,32 +124,59 @@ public class ModificaAttivitaController implements Initializable {
                 case "Alta":  idPrioritaReale = 3; break;
             }
 
-            // 1. Aggiorna i campi di testo nel Dominio
+            // update oggetto in RAM
             this.attivitaInModifica.setTitolo(titolo);
             this.attivitaInModifica.setDataScadenza(scadenza);
             
-            // 2. Verifica lo stato della CheckBox
             boolean isCompletataOra = this.completataCheckBox.isSelected();
             this.attivitaInModifica.setCompletata(isCompletataOra);
             
-            // 3. Gestione automatica della data di completamento
             if (isCompletataOra && this.attivitaInModifica.getDataCompletamento() == null) {
-                // Se la spuntiamo oggi, assegna la data odierna
                 this.attivitaInModifica.setDataCompletamento(LocalDate.now());
             } else if (!isCompletataOra) {
-                // Se togliamo la spunta per errore, resetta la data
                 this.attivitaInModifica.setDataCompletamento(null);
             }
 
-            boolean aggiornato = this.attivitaDAO.aggiornaAttivita(this.attivitaInModifica, idCategoriaReale, idPrioritaReale);
+            // push su DB
+            boolean salvataggioOk = this.attivitaDAO.aggiornaAttivita(this.attivitaInModifica, idCategoriaReale, idPrioritaReale);
 
-            if (aggiornato) {
+            if (salvataggioOk) {
+                // per fare le cose precise andrebbero cancellate le vecchie notifiche associate
+                // a questo ID prima di inserire quelle nuove 
+                
+                LocalDateTime orarioScadenzaAggiornato = scadenza.atTime(9, 0);
+
+                if (idPrioritaReale == 3) {
+                    Notifica n15 = new Notifica("Alert 15gg: " + titolo, "DA_LEGGERE", orarioScadenzaAggiornato.minusDays(15), this.attivitaInModifica);
+                    Notifica n5 = new Notifica("Alert 5gg: " + titolo, "DA_LEGGERE", orarioScadenzaAggiornato.minusDays(5), this.attivitaInModifica);
+                    this.notificaDAO.inserisciNotifica(n15);
+                    this.notificaDAO.inserisciNotifica(n5);
+                }
+                if (idPrioritaReale >= 2) {
+                    Notifica n1 = new Notifica("Scadenza domani: " + titolo, "DA_LEGGERE", orarioScadenzaAggiornato.minusDays(1), this.attivitaInModifica);
+                    this.notificaDAO.inserisciNotifica(n1);
+                }
+
+                // override del metodo di notifiche manuali 
+                if (this.promemoriaManualeCheck.isSelected() && this.anticipoComboBox.getValue() != null) {
+                    String comboScelta = this.anticipoComboBox.getValue();
+                    LocalDateTime invioManuale = orarioScadenzaAggiornato;
+                    
+                    if (comboScelta.equals("1 ora prima")) invioManuale = orarioScadenzaAggiornato.minusHours(1);
+                    if (comboScelta.equals("1 giorno prima")) invioManuale = orarioScadenzaAggiornato.minusDays(1);
+                    if (comboScelta.equals("2 giorni prima")) invioManuale = orarioScadenzaAggiornato.minusDays(2);
+                    
+                    Notifica customNotifica = new Notifica("Custom alert: " + titolo, "DA_LEGGERE", invioManuale, this.attivitaInModifica);
+                    this.notificaDAO.inserisciNotifica(customNotifica);
+                }
+
                 ViewDispatcher.getInstance().homeView();
             } else {
-                this.erroreLabel.setText("Errore durante l'aggiornamento.");
+                this.erroreLabel.setText("Niente, l'update sul database è fallito.");
             }
         } catch (Exception e) {
-            this.erroreLabel.setText("Eccezione: " + e.getMessage());
+            System.err.println("Eccezione catturata in salvaModificheAction.");
+            this.erroreLabel.setText("Errore logico: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -133,8 +185,8 @@ public class ModificaAttivitaController implements Initializable {
     private void eliminaAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Conferma Eliminazione");
-        alert.setHeaderText("Sei sicuro di voler eliminare questa attività?");
-        alert.setContentText("L'azione è irreversibile e i dati andranno persi.");
+        alert.setHeaderText("Sicuro di voler procedere?");
+        alert.setContentText("I dati verranno rimossi definitivamente dal DB.");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -146,7 +198,7 @@ public class ModificaAttivitaController implements Initializable {
                     e.printStackTrace();
                 }
             } else {
-                this.erroreLabel.setText("Errore durante l'eliminazione.");
+                this.erroreLabel.setText("Errore SQL durante la delete.");
             }
         }
     }

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -26,6 +27,17 @@
         
         <ComboBox fx:id="categoriaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona categoria" />
         <ComboBox fx:id="prioritaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona priorità" />
+
+        <!-- EPICA 5: Box per le notifiche manuali (Umanizzato e pulito) -->
+        <VBox alignment="CENTER" spacing="10.0" style="-fx-border-color: #d1d3e2; -fx-border-radius: 8; -fx-padding: 15;">
+            <children>
+                <Label text="Impostazioni Notifiche" textFill="#4e73df">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+                <CheckBox fx:id="promemoriaManualeCheck" onAction="#abilitaPromemoriaAction" text="Attiva promemoria manuale personalizzato" />
+                <ComboBox fx:id="anticipoComboBox" disable="true" prefWidth="250.0" promptText="Scegli l'anticipo..." />
+            </children>
+        </VBox>
         
         <Label fx:id="erroreLabel" textFill="RED">
             <font>

@@ -16,24 +16,35 @@
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
     </padding>
     <children>
-        <Label text="Gestione Attività (Modifica/Elimina)">
+        <Label text="Gestione attività">
             <font>
                 <Font name="System Bold" size="24.0" />
             </font>
         </Label>
         
-        <TextField fx:id="titoloField" prefHeight="40.0" prefWidth="300.0" promptText="Titolo dell'attività (Obbligatorio)" />
+        <TextField fx:id="titoloField" prefHeight="40.0" prefWidth="300.0" promptText="Titolo dell'attività" />
         <DatePicker fx:id="scadenzaPicker" prefHeight="40.0" prefWidth="300.0" promptText="Data di Scadenza" />
         
-        <ComboBox fx:id="categoriaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona Categoria" />
-        <ComboBox fx:id="prioritaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona Priorità" />
+        <ComboBox fx:id="categoriaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona categoria" />
+        <ComboBox fx:id="prioritaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona priorità" />
         
-        <!-- NUOVA CHECKBOX PER CONCLUDERE L'EPICA 3 -->
-        <CheckBox fx:id="completataCheckBox" text="Segna come Completata" textFill="#28a745">
+        <!-- CHECKBOX EPICA 3 -->
+        <CheckBox fx:id="completataCheckBox" text="Segna come completata" textFill="#28a745">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </CheckBox>
+
+        <!-- EPICA 5: Box per le notifiche manuali -->
+        <VBox alignment="CENTER" spacing="10.0" style="-fx-border-color: #d1d3e2; -fx-border-radius: 8; -fx-padding: 15;">
+            <children>
+                <Label text="Impostazioni notifiche" textFill="#4e73df">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+                <CheckBox fx:id="promemoriaManualeCheck" onAction="#abilitaPromemoriaAction" text="Attiva nuovo promemoria personalizzato" />
+                <ComboBox fx:id="anticipoComboBox" disable="true" prefWidth="250.0" promptText="Scegli l'anticipo..." />
+            </children>
+        </VBox>
         
         <Label fx:id="erroreLabel" textFill="RED">
             <font>

@@ -48,7 +48,7 @@
 
     <build>
         <plugins>
-            <!-- Plugin Surefire per eseguire i test JUnit automaticamente -->
+            <!-- per fa i test di Junit -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

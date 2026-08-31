@@ -1,17 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller;
 
-/**
- *
- * @author Filippo
- */
 import database.AttivitaDAO;
+import database.CategoriaDAO;
 import database.NotificaDAO;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Attivita;
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Categoria;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Notifica;
+import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain.Utente;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher;
 import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewException;
 import javafx.event.ActionEvent;
@@ -24,10 +19,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -39,23 +36,29 @@ public class ModificaAttivitaController implements Initializable {
     @FXML private ComboBox<String> prioritaComboBox;
     @FXML private CheckBox completataCheckBox;
     
-    // UI Epica 5
+    // Nodi per l'Epica 5 e 6
     @FXML private CheckBox promemoriaManualeCheck;
     @FXML private ComboBox<String> anticipoComboBox;
-    
     @FXML private Label erroreLabel;
 
     private AttivitaDAO attivitaDAO;
     private NotificaDAO notificaDAO;
+    private CategoriaDAO categoriaDAO;
     private Attivita attivitaInModifica;
+    private List<Categoria> listaCategorieDB;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             this.attivitaDAO = new AttivitaDAO();
             this.notificaDAO = new NotificaDAO();
+            this.categoriaDAO = new CategoriaDAO();
             
-            this.categoriaComboBox.getItems().addAll("Studio", "Lavoro", "Palestra", "Hobby", "Finanze");
+            Utente utenteLoggato = ViewDispatcher.getInstance().getUtenteLoggato();
+            if (utenteLoggato != null) {
+                aggiornaTendinaCategorie(utenteLoggato.getId());
+            }
+            
             this.prioritaComboBox.getItems().addAll("Bassa", "Media", "Alta");
             this.anticipoComboBox.getItems().addAll("1 ora prima", "1 giorno prima", "2 giorni prima");
             
@@ -63,7 +66,6 @@ public class ModificaAttivitaController implements Initializable {
 
             this.attivitaInModifica = ViewDispatcher.getInstance().getAttivitaSelezionata();
 
-            // binding dati iniziali
             if (this.attivitaInModifica != null) {
                 this.titoloField.setText(this.attivitaInModifica.getTitolo());
                 this.scadenzaPicker.setValue(this.attivitaInModifica.getDataScadenza());
@@ -74,14 +76,51 @@ public class ModificaAttivitaController implements Initializable {
                 this.erroreLabel.setText("Nessuna attività trovata nel dispatcher.");
             }
         } catch (Exception e) {
-            System.err.println("Errore in fase di init del controller di modifica.");
             e.printStackTrace();
         }
     }
 
+    private void aggiornaTendinaCategorie(int idUtente) {
+        this.categoriaComboBox.getItems().clear();
+        this.listaCategorieDB = this.categoriaDAO.getCategorieUtente(idUtente);
+        for (Categoria c : this.listaCategorieDB) {
+            this.categoriaComboBox.getItems().add(c.getNomeCategoria());
+        }
+    }
+
+    @FXML
+    private void aggiungiCategoriaAction(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Gestione Categorie");
+        dialog.setHeaderText("Aggiungi una nuova categoria");
+        dialog.setContentText("Nome della categoria:");
+
+        Optional<String> result = dialog.showAndWait();
+        
+        result.ifPresent(nome -> {
+            if (nome.trim().isEmpty()) {
+                this.erroreLabel.setText("Il nome della categoria è vuoto");
+                return;
+            }
+            try {
+                Utente u = ViewDispatcher.getInstance().getUtenteLoggato();
+                Categoria salvata = this.categoriaDAO.inserisciCategoriaCustom(nome.trim(), u.getId());
+                
+                if (salvata != null) {
+                    aggiornaTendinaCategorie(u.getId());
+                    this.categoriaComboBox.setValue(salvata.getNomeCategoria());
+                } else {
+                    this.erroreLabel.setText("Errore SQL durante l'inserimento");
+                }
+            } catch (Exception e) {
+                System.err.println("Errore logico in aggiungiCategoriaAction");
+                e.printStackTrace();
+            }
+        });
+    }
+
     @FXML
     private void abilitaPromemoriaAction(ActionEvent event) {
-        // toggle tendina
         this.anticipoComboBox.setDisable(!this.promemoriaManualeCheck.isSelected());
     }
 
@@ -91,7 +130,6 @@ public class ModificaAttivitaController implements Initializable {
             String titolo = this.titoloField.getText();
             LocalDate scadenza = this.scadenzaPicker.getValue();
             
-            // check parametri base
             if (titolo == null || titolo.trim().isEmpty()) {
                 this.erroreLabel.setText("Il Titolo è obbligatorio.");
                 return;
@@ -101,30 +139,38 @@ public class ModificaAttivitaController implements Initializable {
                 this.erroreLabel.setText("Seleziona Categoria e Priorità.");
                 return;
             }
-            
+
             if (scadenza == null) {
                 this.erroreLabel.setText("Data scadenza richiesta per i promemoria.");
                 return;
             }
 
-            // mapping da stringhe a id db
-            int idCategoriaReale = 4;
-            switch (this.categoriaComboBox.getValue()) {
-                case "Studio":   idCategoriaReale = 4; break;
-                case "Lavoro":   idCategoriaReale = 5; break;
-                case "Palestra": idCategoriaReale = 6; break;
-                case "Hobby":    idCategoriaReale = 7; break;
-                case "Finanze":  idCategoriaReale = 8; break;
+            String categoriaSelezionata = this.categoriaComboBox.getValue();
+            String prioritaSelezionata = this.prioritaComboBox.getValue();
+
+            // Sostituzione dello switch con il fetch dell'ID reale dal DB
+            int idCategoriaReale = -1;
+            if (this.listaCategorieDB != null) {
+                for (Categoria c : this.listaCategorieDB) {
+                    if (c.getNomeCategoria().equals(categoriaSelezionata)) {
+                        idCategoriaReale = c.getId();
+                        break;
+                    }
+                }
+            }
+
+            if (idCategoriaReale == -1) {
+                this.erroreLabel.setText("Errore: categoria non mappata.");
+                return;
             }
 
             int idPrioritaReale = 3;
-            switch (this.prioritaComboBox.getValue()) {
+            switch (prioritaSelezionata) {
                 case "Bassa": idPrioritaReale = 1; break;
                 case "Media": idPrioritaReale = 2; break;
                 case "Alta":  idPrioritaReale = 3; break;
             }
 
-            // update oggetto in RAM
             this.attivitaInModifica.setTitolo(titolo);
             this.attivitaInModifica.setDataScadenza(scadenza);
             
@@ -137,12 +183,9 @@ public class ModificaAttivitaController implements Initializable {
                 this.attivitaInModifica.setDataCompletamento(null);
             }
 
-            // push su DB
-            boolean salvataggioOk = this.attivitaDAO.aggiornaAttivita(this.attivitaInModifica, idCategoriaReale, idPrioritaReale);
+            boolean aggiornato = this.attivitaDAO.aggiornaAttivita(this.attivitaInModifica, idCategoriaReale, idPrioritaReale);
 
-            if (salvataggioOk) {
-                // per fare le cose precise andrebbero cancellate le vecchie notifiche associate
-                // a questo ID prima di inserire quelle nuove 
+            if (aggiornato) {
                 
                 LocalDateTime orarioScadenzaAggiornato = scadenza.atTime(9, 0);
 
@@ -157,7 +200,6 @@ public class ModificaAttivitaController implements Initializable {
                     this.notificaDAO.inserisciNotifica(n1);
                 }
 
-                // override del metodo di notifiche manuali 
                 if (this.promemoriaManualeCheck.isSelected() && this.anticipoComboBox.getValue() != null) {
                     String comboScelta = this.anticipoComboBox.getValue();
                     LocalDateTime invioManuale = orarioScadenzaAggiornato;
@@ -172,11 +214,10 @@ public class ModificaAttivitaController implements Initializable {
 
                 ViewDispatcher.getInstance().homeView();
             } else {
-                this.erroreLabel.setText("Niente, l'update sul database è fallito.");
+                this.erroreLabel.setText("Errore durante l'aggiornamento.");
             }
         } catch (Exception e) {
-            System.err.println("Eccezione catturata in salvaModificheAction.");
-            this.erroreLabel.setText("Errore logico: " + e.getMessage());
+            this.erroreLabel.setText("Eccezione: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -185,8 +226,8 @@ public class ModificaAttivitaController implements Initializable {
     private void eliminaAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Conferma Eliminazione");
-        alert.setHeaderText("Sicuro di voler procedere?");
-        alert.setContentText("I dati verranno rimossi definitivamente dal DB.");
+        alert.setHeaderText("Sei sicuro di voler eliminare questa attività?");
+        alert.setContentText("L'azione è irreversibile e i dati andranno persi.");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -198,7 +239,7 @@ public class ModificaAttivitaController implements Initializable {
                     e.printStackTrace();
                 }
             } else {
-                this.erroreLabel.setText("Errore SQL durante la delete.");
+                this.erroreLabel.setText("Errore durante l'eliminazione.");
             }
         }
     }

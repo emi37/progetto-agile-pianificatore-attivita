@@ -24,6 +24,7 @@ import javafx.scene.control.TextInputDialog;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -68,7 +69,9 @@ public class ModificaAttivitaController implements Initializable {
             if (this.attivitaInModifica != null) {
                 this.titoloField.setText(this.attivitaInModifica.getTitolo());
                 this.scadenzaPicker.setValue(this.attivitaInModifica.getDataScadenza());
+                
                 this.categoriaComboBox.setValue(this.attivitaInModifica.getCategoria().getNomeCategoria());
+                
                 this.prioritaComboBox.setValue(this.attivitaInModifica.getPriorita().getLivello());
                 this.completataCheckBox.setSelected(this.attivitaInModifica.isCompletata());
             } else {
@@ -81,7 +84,29 @@ public class ModificaAttivitaController implements Initializable {
 
     private void aggiornaTendinaCategorie(int idUtente) {
         this.categoriaComboBox.getItems().clear();
-        this.listaCategorieDB = this.categoriaDAO.getCategorieUtente(idUtente);
+        this.listaCategorieDB = new ArrayList<>(); 
+        
+        //  le categorie di default sul db
+        this.listaCategorieDB.add(new Categoria(4, "Studio", idUtente));
+        this.listaCategorieDB.add(new Categoria(5, "Lavoro", idUtente));
+        this.listaCategorieDB.add(new Categoria(6, "Palestra", idUtente));
+        this.listaCategorieDB.add(new Categoria(7, "Hobby", idUtente));
+        this.listaCategorieDB.add(new Categoria(8, "Finanze", idUtente));
+
+        // Recupero quelle personalizzate dal DB
+        List<Categoria> categorieCustom = this.categoriaDAO.getCategorieUtente(idUtente);
+        if (categorieCustom != null) {
+            for (Categoria c : categorieCustom) {
+                // Controllo per evitare doppioni
+                boolean esiste = this.listaCategorieDB.stream()
+                        .anyMatch(def -> def.getNomeCategoria().equalsIgnoreCase(c.getNomeCategoria()));
+                if (!esiste) {
+                    this.listaCategorieDB.add(c);
+                }
+            }
+        }
+        
+        // metto tutto nella tendinaa
         for (Categoria c : this.listaCategorieDB) {
             this.categoriaComboBox.getItems().add(c.getNomeCategoria());
         }

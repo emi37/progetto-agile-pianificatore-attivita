@@ -23,6 +23,7 @@ import javafx.scene.control.TextInputDialog;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -62,17 +63,39 @@ public class CreazioneAttivitaController implements Initializable {
         this.erroreLabel.setText("");
     }
 
-    // Metodo per ricaricare la ui dal db
+    // Metodo per aggornare la tendina delle categoria dal db
     private void aggiornaTendinaCategorie(int idUtente) {
         this.categoriaComboBox.getItems().clear();
-        this.listaCategorieDB = this.categoriaDAO.getCategorieUtente(idUtente);
+        this.listaCategorieDB = new ArrayList<>(); // uso un arrayList 
+        
+        //   categorie di default 
+        this.listaCategorieDB.add(new Categoria(4, "Studio", idUtente));
+        this.listaCategorieDB.add(new Categoria(5, "Lavoro", idUtente));
+        this.listaCategorieDB.add(new Categoria(6, "Palestra", idUtente));
+        this.listaCategorieDB.add(new Categoria(7, "Hobby", idUtente));
+        this.listaCategorieDB.add(new Categoria(8, "Finanze", idUtente));
+
+        // Recupero quelle personalizzate dal db e chiamo la dao di categoria per estrarle 
+        List<Categoria> categorieCustom = this.categoriaDAO.getCategorieUtente(idUtente);
+        if (categorieCustom != null) {
+            for (Categoria c : categorieCustom) {
+                // Controllo per evitare i dopponi cioè magari se l'utente ha creato una categoria con lo stesso nome
+                boolean esiste = this.listaCategorieDB.stream()
+                        .anyMatch(def -> def.getNomeCategoria().equalsIgnoreCase(c.getNomeCategoria()));
+                if (!esiste) {
+                    this.listaCategorieDB.add(c);
+                }
+            }
+        }
+        
+        // metto tutto nella tendina 
         for (Categoria c : this.listaCategorieDB) {
             this.categoriaComboBox.getItems().add(c.getNomeCategoria());
         }
     }
 
     /**
-    bottone agg. categoria 
+    . bottone agg. categoria 
      */
     @FXML
     private void aggiungiCategoriaAction(ActionEvent event) {

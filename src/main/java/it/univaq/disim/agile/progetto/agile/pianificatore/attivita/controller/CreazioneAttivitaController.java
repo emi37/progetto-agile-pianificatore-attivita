@@ -34,16 +34,15 @@ public class CreazioneAttivitaController implements Initializable {
     @FXML private ComboBox<String> categoriaComboBox;
     @FXML private ComboBox<String> prioritaComboBox;
     
-    // Variabili FXML in base alla modifica grafica (Epica 5)
     @FXML private CheckBox promemoriaManualeCheck;
     @FXML private ComboBox<String> anticipoComboBox;
     @FXML private Label erroreLabel;
 
     private AttivitaDAO attivitaDAO;
     private NotificaDAO notificaDAO; 
-    private CategoriaDAO categoriaDAO; // DAO per gestire le categorie custom (Epica 6)
+    private CategoriaDAO categoriaDAO; // class DAO per gestire le categorie custom personalizzate
     
-    private List<Categoria> listaCategorieDB; // cache locale per mappare i nomi agli ID reali
+    private List<Categoria> listaCategorieDB; 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -53,7 +52,7 @@ public class CreazioneAttivitaController implements Initializable {
         
         Utente utenteLoggato = ViewDispatcher.getInstance().getUtenteLoggato();
         if (utenteLoggato != null) {
-            // carica le categorie dal DB invece di usare stringhe hardcoded
+            // carica le categorie dal DB 
             aggiornaTendinaCategorie(utenteLoggato.getId());
         }
         
@@ -63,7 +62,7 @@ public class CreazioneAttivitaController implements Initializable {
         this.erroreLabel.setText("");
     }
 
-    // Metodo helper per ricaricare la UI dal DB
+    // Metodo per ricaricare la ui dal db
     private void aggiornaTendinaCategorie(int idUtente) {
         this.categoriaComboBox.getItems().clear();
         this.listaCategorieDB = this.categoriaDAO.getCategorieUtente(idUtente);
@@ -73,8 +72,7 @@ public class CreazioneAttivitaController implements Initializable {
     }
 
     /**
-     * Handler per il bottone "+ agg. categoria" (Epica 6).
-     * Istanzia un dialog di sistema, intercetta l'input e fa il push sul DB.
+    bottone agg. categoria 
      */
     @FXML
     private void aggiungiCategoriaAction(ActionEvent event) {
@@ -95,11 +93,10 @@ public class CreazioneAttivitaController implements Initializable {
             Categoria salvata = this.categoriaDAO.inserisciCategoriaCustom(nome.trim(), u.getId());
             
             if (salvata != null) {
-                // refresh della ui e auto-selezione
                 aggiornaTendinaCategorie(u.getId());
                 this.categoriaComboBox.setValue(salvata.getNomeCategoria());
             } else {
-                this.erroreLabel.setText("Errore SQL durante l'inserimento della categoria");
+                this.erroreLabel.setText("Errore durante l'inserimento della categoria");
             }
         });
     }
@@ -133,7 +130,6 @@ public class CreazioneAttivitaController implements Initializable {
             String categoriaSelezionata = this.categoriaComboBox.getValue();
             String prioritaSelezionata = this.prioritaComboBox.getValue();
 
-            // Mapping dinamico: scansiona la cache RAM per trovare l'ID reale della categoria
             int idCategoriaReale = -1;
             for (Categoria c : this.listaCategorieDB) {
                 if (c.getNomeCategoria().equals(categoriaSelezionata)) {
@@ -143,11 +139,10 @@ public class CreazioneAttivitaController implements Initializable {
             }
             
             if (idCategoriaReale == -1) {
-                this.erroreLabel.setText("Errore: categoria non valida o non mappata.");
+                this.erroreLabel.setText("Errore, categoria non valida.");
                 return;
             }
 
-            // Mapping statico della priorità
             int idPrioritaReale = 3;
             switch (prioritaSelezionata) {
                 case "Bassa": idPrioritaReale = 1; break;
@@ -157,7 +152,7 @@ public class CreazioneAttivitaController implements Initializable {
 
             Utente utenteLoggato = ViewDispatcher.getInstance().getUtenteLoggato();
             if (utenteLoggato == null) {
-                this.erroreLabel.setText("Errore: utente non ha una sessione");
+                this.erroreLabel.setText("Errore l'utente non ha una sessione");
                 return;
             }
             

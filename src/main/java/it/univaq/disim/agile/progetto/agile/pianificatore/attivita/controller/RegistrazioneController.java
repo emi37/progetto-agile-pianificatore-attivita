@@ -22,9 +22,7 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Controller per la vista di Registrazione. Implementa Initializable.
- */
+/**controller per la vista della registrazione nel login */
 public class RegistrazioneController implements Initializable {
 
     @FXML
@@ -76,7 +74,6 @@ public class RegistrazioneController implements Initializable {
     @FXML
     private void tornaAlLoginAction(ActionEvent event) {
         try {
-            // Utilizziamo il dispatcher, passando lo stage attualmente in uso
             ViewDispatcher.getInstance().loginView((javafx.stage.Stage) usernameField.getScene().getWindow());
         } catch (ViewException e) {
             e.printStackTrace();

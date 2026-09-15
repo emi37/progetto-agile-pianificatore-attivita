@@ -10,13 +10,12 @@
    
    <Label text="Effettua il login " />
    
-   <!-- i campi di input collegati al controller tramite fx:id -->
+   <!-- i campi degli input sono collegati al controller tramite il fx: id -->
    <TextField fx:id="usernameField" promptText="Inserisci username..." maxWidth="200" />
    <PasswordField fx:id="passwordField" promptText="Inserisci password..." maxWidth="200" />
    
-   <!--ertichetta per i messaggi di errore(invisibile di default) -->
+   <!--ertichetta per gli errori-->
    <Label fx:id="errorLabel" textFill="RED" />  
-   <!--Bottone che attiva il login -->
    <Button text="Accedi" onAction="#loginAction" />
    
    <Button text="Non hai un account? Registrati qui" onAction="#vaiARegistrazioneAction" />

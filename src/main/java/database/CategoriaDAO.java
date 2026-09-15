@@ -20,11 +20,11 @@ import java.util.List;
 public class CategoriaDAO {
 
     /**
-     * Estrae tutte le categorie associate a un utente (incluse quelle standard).
+     * Estrae tutte le categorie associate a un utente .
      */
     public List<Categoria> getCategorieUtente(int idUtente) {
         List<Categoria> lista = new ArrayList<>();
-        // Prende le categorie standard (id_utente = 0 o null a seconda del tuo DB) e quelle specifiche dell'utente
+        //prende le categorie standard (id_utente = 0 ) e quelle specifiche dell'utente
         String sql = "SELECT * FROM categoria WHERE id_utente IS NULL OR id_utente = 0 OR id_utente = ?";
         
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -47,7 +47,7 @@ public class CategoriaDAO {
     }
 
     /**
-     * Inserisce una nuova categoria custom nel DB e restituisce l'oggetto aggiornato con l'ID.
+     * metodo per inserire una nuova categoria personalizzata e restituisce l'oggetto aggiornato con l'ID.
      */
     public Categoria inserisciCategoriaCustom(String nomeCategoria, int idUtente) {
         String sql = "INSERT INTO categoria (nome_categoria, id_utente) VALUES (?, ?)";

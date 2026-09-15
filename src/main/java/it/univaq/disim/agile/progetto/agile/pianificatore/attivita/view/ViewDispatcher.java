@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class ViewDispatcher {
 
-    // 1. Implementazione del Singleton
+    // singleton(l'abbiamo usato solo qui)
     private static ViewDispatcher instance = new ViewDispatcher();
 
     private Stage stage;
@@ -21,19 +21,19 @@ public class ViewDispatcher {
     private static final String FXML_SUFFIX = ".fxml";
     private static final String RESOURCE_BASE = "/viste/";
     
-    // Gestione dell'utente loggato in sessione
+    //gestione dell'utente loggato in sessione
     private Utente utenteLoggato;
 
-    // Costruttore privato per il Singleton
+    //costruttore privato per il singleton(perché mi permette di creare un 'istanza singola di una classe quindi il costruttore non può essere pubblico
     private ViewDispatcher() {
     }
 
-    // Metodo statico per ottenere l'istanza
+    //metodo pubblico e statico per accedere all'unica istanza he c'è, questo è l'unico modo per le altre calssi di accedere a questo singeton
     public static ViewDispatcher getInstance() {
         return instance;
     }
 
-    // 2. Metodo per visualizzare la schermata di login iniziale
+    //  per visualizzare la schermata di login all'inizio
     public void loginView(Stage stage) throws ViewException {
         this.stage = stage;
         Parent loginView = loadView("login");
@@ -42,7 +42,7 @@ public class ViewDispatcher {
         stage.show();
     }
 
-    // 3. Metodo invocato dopo il login: imposta il layout base e la home
+    // dopo il login imposta il layout base e la home
     public void loggedIn() throws ViewException {
         try {
             layout = (BorderPane) loadView("layout");
@@ -55,7 +55,7 @@ public class ViewDispatcher {
         }
     }
 
-    // 4. Metodo per il logout: ricarica la pagina di login
+    // metodo per il logout che ricarica poi la pagina di login
     public void logout() {
         try {
             Parent loginView = loadView("login");
@@ -66,7 +66,7 @@ public class ViewDispatcher {
         }
     }
 
-    // 5. Metodo per caricare viste generiche al centro del layout
+    // caricare viste 
     public void renderView(String viewName) {
         try {
             Parent view = loadView(viewName);
@@ -76,7 +76,7 @@ public class ViewDispatcher {
         }
     }
 
-    // 6. Metodi di utilità per gestire gli errori e caricare fisicamente i file FXML
+    // gestisce gli errori
     private void renderError(ViewException e) {
         e.printStackTrace();
         System.exit(1);
@@ -125,9 +125,7 @@ public class ViewDispatcher {
     }
 
    /**
-     * Metodo per navigare verso la schermata di Creazione di una nuova Attività.
-     * Propaga l'eccezione personalizzata ViewException in caso di errore di caricamento.
-     */
+     * metodo per la vista della creazione di una nuova attività     */
     public void creazioneAttivitaView() throws ViewException {
         try {
             Parent creazioneRoot = javafx.fxml.FXMLLoader.load(getClass().getResource("/viste/creazioneAttivita.fxml"));
@@ -136,13 +134,11 @@ public class ViewDispatcher {
             stage.setTitle("Crea una nuova attivita ");
             stage.show();
         } catch (java.io.IOException e) {
-            // Incapsuliamo l'errore nativo nella nostra eccezione architetturale
             throw new ViewException("Errore nel caricamento di file .fxml", e);
         }
     }
     
     
-    // 1. Variabile per trasportare l'attività cliccata dalla Home alla schermata di modifica
     private Attivita attivitaSelezionata;
 
     public Attivita getAttivitaSelezionata() {
@@ -154,11 +150,11 @@ public class ViewDispatcher {
     }
 
     /**
-     * Metodo per navigare verso la schermata di Modifica/Cancellazione
-     */
+     * metodo per la vista della modofica(e cancellazione quindi) di una attività     */
+     
     public void modificaAttivitaView() {
         try {
-            // Assicurati che l'import di javafx.scene.Parent sia presente (lo è già per le altre viste)
+            // import di javafx.scene.Parent, per le altre viste già è importato
             Parent modificaRoot = javafx.fxml.FXMLLoader.load(getClass().getResource("/viste/modificaAttivita.fxml"));
             Scene scene = new Scene(modificaRoot);
             stage.setScene(scene);
@@ -169,13 +165,13 @@ public class ViewDispatcher {
         }
     }
     
-    // Metodo per la visualizzazione del calendario
+    //metodo per la visualizzazione del calendario
     public void calendarioView() {
     try {
         Parent calendarioRoot = FXMLLoader.load(getClass().getResource("/viste/calendario.fxml"));
         Scene scene = new Scene(calendarioRoot);
         stage.setScene(scene);
-        stage.setTitle("Calendario Impegni - Duff Tech");
+        stage.setTitle("Calendario Impegni");
         stage.show();
     } catch (IOException e) {
         e.printStackTrace();

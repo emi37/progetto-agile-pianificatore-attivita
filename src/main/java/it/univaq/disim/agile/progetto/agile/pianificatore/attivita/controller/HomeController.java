@@ -54,45 +54,41 @@ public class HomeController implements Initializable {
     private TableColumn<Attivita, String> categoriaCompletateCol;
 
     private AttivitaDAO attivitaDAO;
-    private NotificaDAO notificaDAO; // Aggiunto per l'Epica 5
+    private NotificaDAO notificaDAO; //dao per prendere le notifiche dal db con le query
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.attivitaDAO = new AttivitaDAO();
-        this.notificaDAO = new NotificaDAO(); // Istanziamo il motore delle notifiche
+        this.notificaDAO = new NotificaDAO(); // creo una nuova istanza delle notifiche
         
         Utente utenteLoggato = ViewDispatcher.getInstance().getUtenteLoggato();
 
         if (utenteLoggato != null) {
             this.benvenutoLabel.setText("Benvenuto nella tua home personale, " + utenteLoggato.getUsername() );
 
-            // 1. Configurazione colonne Tabella Urgenti
+            
             titoloUrgentiCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitolo()));
             scadenzaUrgentiCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                     cellData.getValue().getDataScadenza() != null ? cellData.getValue().getDataScadenza().toString() : ""));
             categoriaUrgentiCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategoria().getNomeCategoria()));
             prioritaUrgentiCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPriorita().getLivello()));
 
-            // 2. Configurazione colonne Tabella Completate
             titoloCompletateCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitolo()));
             dataCompletamentoCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                     cellData.getValue().getDataCompletamento() != null ? cellData.getValue().getDataCompletamento().toString() : ""));
             categoriaCompletateCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategoria().getNomeCategoria()));
 
-            // 3. Popolamento Dati dal DAO
+            // prendo i dati che passa il dao 
             caricaDati(utenteLoggato.getId());
             
-            // --- INIZIO EPICA 5: Check notifiche all'avvio della Dashboard ---
             gestisciPopUpNotifiche(utenteLoggato.getId());
-            // --- FINE EPICA 5 ---
 
-            // 4. Implementazione del click per modifica (Epica 2 / Epica 3)
+            //  clicko l'attività per modificarla
             urgentiTable.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
                     Attivita selezionata = urgentiTable.getSelectionModel().getSelectedItem();
                     if (selezionata != null) {
                         ViewDispatcher.getInstance().setAttivitaSelezionata(selezionata);
-                        // Rispettato il tuo codice originale: nessuna eccezione aggiunta qui!
                         ViewDispatcher.getInstance().modificaAttivitaView();
                     }
                 }
@@ -101,17 +97,18 @@ public class HomeController implements Initializable {
     }
 
     private void caricaDati(int idUtente) {
-        // Estrazione attività Urgenti (ordinate dal DB)
+        // estrazione delle attività urgenti 
         List<Attivita> listaUrgenti = this.attivitaDAO.getAttivitaUrgenti(idUtente);
         ObservableList<Attivita> observableUrgenti = FXCollections.observableArrayList(listaUrgenti);
         this.urgentiTable.setItems(observableUrgenti);
 
-        // Estrazione attività Completate
+        // estraggo le attività completate
         List<Attivita> listaCompletate = this.attivitaDAO.getAttivitaCompletate(idUtente);
         ObservableList<Attivita> observableCompletate = FXCollections.observableArrayList(listaCompletate);
         this.completateTable.setItems(observableCompletate);
 
-        // Calcolo Analisi (Statistiche)
+        
+      
         LocalDate inizioSettimana = LocalDate.now().with(DayOfWeek.MONDAY);
         LocalDate inizioMese = LocalDate.now().withDayOfMonth(1);
 
@@ -122,27 +119,23 @@ public class HomeController implements Initializable {
         this.statMeseLabel.setText(String.valueOf(countMese));
     }
     
-    /**
-     * Metodo per mostrare a schermo i promemoria scaduti appena si apre la dashboard.
-     */
+   
+    
     private void gestisciPopUpNotifiche(int idUtente) {
-        // Peschiamo le notifiche scadute o da leggere subito
+
         List<Notifica> notificheScadute = this.notificaDAO.estraiNotificheDaMostrare(idUtente);
         
         for (Notifica n : notificheScadute) {
-            // Mostriamo un pop-up bloccante per ogni notifica
             Alert avviso = new Alert(Alert.AlertType.WARNING);
-            avviso.setTitle("Ehi, Promemoria Scadenza!");
+            avviso.setTitle("Promemoria della scadenza: ");
             avviso.setHeaderText("Attività in scadenza: " + n.getAttivita().getTitolo());
             avviso.setContentText(n.getMessaggio() + "\n\n(Priorità " + n.getAttivita().getPriorita().getLivello() + ")");
             
             avviso.showAndWait();
             
-            // L'utente ha chiuso il popup, quindi la segniamo come letta sul database
             boolean aggiornata = this.notificaDAO.aggiornaStatoLetta(n.getIdNotifica());
             if (!aggiornata) {
-                // Se non riesco ad aggiornarla, stampo un errorino per il debug
-                System.err.println("Maronn, errore nell'aggiornamento della notifica id: " + n.getIdNotifica());
+                System.err.println("errore nell'aggiornamento della notifica id,(non è stata modificata) " + n.getIdNotifica());
             }
         }
     }

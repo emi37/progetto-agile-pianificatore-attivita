@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-// Controller del calendario per gestire la vista mensile e settimanale delle attività.
+// controller del calendario per gestire la vista mensile e settimanale delle attività
 public class CalendarioController implements Initializable {
 
     @FXML
@@ -42,39 +42,38 @@ public class CalendarioController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        // Inizializzo il DAO per le interrogazioni al database
+        //creo una nuova istanza del DAO per le estrarre i dati dal database
         attivitaDAO = new AttivitaDAO();
 
-        // Recupero l'utente che ha fatto il login tramite il nostro Singleton
+        //recupero tramite il singleton l'utente che ha fatto il login 
         utenteCorrente = ViewDispatcher.getInstance().getUtenteLoggato();
 
-        // Parto dalla data odierna come riferimento iniziale
+        //uso un metodo che mi da la data odierna come riferimento iniziale
         dataCorrente = LocalDate.now();
 
         vistaComboBox.getItems().addAll("Mese Corrente", "Settimana Corrente");
         vistaComboBox.setValue("Mese Corrente");
         vistaComboBox.setOnAction(event -> generaGrigliaCalendario());
 
-        // Carico i dati dal DB e genero il calendario
+        //carico i dati dal db e genero il calendario
         caricaDatiDatabase();
         generaGrigliaCalendario();
     }
 
-    // Faccio una chiamata al DB per prendere tutte le attività programmate per l'utente
+    // faccio ua chiamata al DB per prendere tutte le attività dell'utente loggato
     private void caricaDatiDatabase() {
         if (utenteCorrente != null) {
             tutteLeAttivita = attivitaDAO.getAttivitaUrgenti(utenteCorrente.getId());
         }
     }
 
-    // Costruisce il calendario e applica i filtri
+    // costruisce il calendario e applica i filtri
     private void generaGrigliaCalendario() {
         calendarioContainer.getChildren().clear();
 
-        // Controlla se l'utente ha messo la spunta sul filtro delle priorità alte
+        //controlla se l'utenrte ha messo la spunta sul filtro delle priorità alte
         boolean soloAlta = filtroPrioritaAltaCheckBox.isSelected();
 
-        // Filtriamo con gli stream di Java tenendo solo quelle che hanno priorità alta (gestendo un po' di flessibilità nei testi)
         List<Attivita> attivitaFiltrate = tutteLeAttivita;
         if (tutteLeAttivita != null && soloAlta) {
             attivitaFiltrate = tutteLeAttivita.stream()
@@ -87,11 +86,10 @@ public class CalendarioController implements Initializable {
 
         String vistaSelezionata = vistaComboBox.getValue();
 
-        // Intestazione con pulsanti di navigazione dinamici
         HBox navBox = new HBox(15);
         navBox.setAlignment(Pos.CENTER);
 
-        // Pulsante per andare nel mese o settimana precedenti
+        //pulsante per andare nel mese o settimana precedente
         Button btnIndietro = new Button(vistaSelezionata.equals("Settimana Corrente") ? "< Sett. Prec." : "< Mese Prec.");
         btnIndietro.getStyleClass().add("nav-button");
         btnIndietro.setOnAction(e -> {
@@ -103,7 +101,7 @@ public class CalendarioController implements Initializable {
             generaGrigliaCalendario();
         });
 
-        // Etichetta centrale che mostra il mese/anno o l'intervallo della settimana in corso
+        // l' etichetta che mostra il mese/anno o l'intervallo della settimana in corso
         meseAnnoLabel = new Label();
         meseAnnoLabel.getStyleClass().add("mese-anno-label");
 
@@ -116,7 +114,7 @@ public class CalendarioController implements Initializable {
             meseAnnoLabel.setText(nomeMese.toUpperCase() + " " + dataCorrente.getYear());
         }
 
-        // Pulsante per andare nel mese o settimana successivi
+        // Pulsante per andare al mese/settimana successivo/a
         Button btnAvanti = new Button(vistaSelezionata.equals("Settimana Corrente") ? "Sett. Succ. >" : "Mese Succ. >");
         btnAvanti.getStyleClass().add("nav-button");
         btnAvanti.setOnAction(e -> {
@@ -131,7 +129,7 @@ public class CalendarioController implements Initializable {
         navBox.getChildren().addAll(btnIndietro, meseAnnoLabel, btnAvanti);
         calendarioContainer.getChildren().add(navBox);
 
-        // Griglia vera e propria per disporre le caselle dei giorni
+        // tablla/griglia nn so come dire per disporre le caselle dei giorni
         GridPane gridPane = new GridPane();
         gridPane.setHgap(8);
         gridPane.setVgap(8);
@@ -147,7 +145,7 @@ public class CalendarioController implements Initializable {
                 VBox giornoBox = creaBoxGiorno(giornoCorrente, giorniSettimana[i] + "\n" + giornoCorrente.getDayOfMonth(), attivitaFiltrate);
                 gridPane.add(giornoBox, i, 0);
             }
-        } // Altrimenti mostro la classica vista mensile
+        } //altrimenti mostro la classica vista mensile
         else {
             String[] giorniAbbrev = {"lu", "ma", "me", "gi", "ve", "sa", "do"};
             for (int i = 0; i < giorniAbbrev.length; i++) {
@@ -165,7 +163,7 @@ public class CalendarioController implements Initializable {
             int riga = 1;
             int colonna = giornoInizio - 1;
             
-            // Ciclo tutti i giorni del mese posizionandoli nelle celle corrette del GridPane
+            // Ciclo tutti i giorni del mese posizionandoli nelle celle 
             for (int giorno = 1; giorno <= giorniTotali; giorno++) {
                 LocalDate dataCasella = LocalDate.of(dataCorrente.getYear(), dataCorrente.getMonth(), giorno);
                 VBox giornoBox = creaBoxGiorno(dataCasella, String.valueOf(giorno), attivitaFiltrate);
@@ -182,8 +180,8 @@ public class CalendarioController implements Initializable {
         calendarioContainer.getChildren().add(gridPane);
     }
     
-    // Costruisce graficamente la singola casella (il box) per un giorno specifico del calendario
-    // Se ci sono attività in quella data, colora il box
+    // costruisco la singola casella(il box)per un giornio specifico del calendsario
+    // se ci sono attività in quella data, colora quel sbox
     private VBox creaBoxGiorno(LocalDate data, String testoVisualizzato, List<Attivita> listaAttivita) {
         VBox box = new VBox(3);
         box.setAlignment(Pos.CENTER);
@@ -195,7 +193,7 @@ public class CalendarioController implements Initializable {
                     .anyMatch(a -> a.getDataScadenza() != null && a.getDataScadenza().equals(data));
         }
         
-        // Applica lo stile CSS a seconda che il giorno abbia o meno attivita programmate
+        // gli do il css a seconda che il giorno abbia o meno delle attività programmate
         if (haAttivita) {
             box.getStyleClass().add("giorno-box-attivo");
         } else {
@@ -211,7 +209,7 @@ public class CalendarioController implements Initializable {
         }
         box.getChildren().add(lbl);
         
-        // Se il giorno è occupato, mette un pallino come promemoria visivo rapido
+        // Se il giorno è occupato, mette un pallino verde come "promemoria visivo"
         if (haAttivita) {
             Label badge = new Label("●");
             badge.getStyleClass().add("giorno-badge");
@@ -240,12 +238,12 @@ public class CalendarioController implements Initializable {
                 }
             }
         } catch (Exception e) {
-            // fallback
+            
         }
         return "Normale";
     }
 
-    // Genera un alert con l'elenco dettagliato delle cose da fare in una certa data
+    // Genera un alert con l'elenco delle cose da fare in una certa data
     private void mostraDettaglioGiorno(LocalDate data, List<Attivita> listaAttivita) {
         List<Attivita> attivitaDelGiorno = null;
         if (listaAttivita != null) {
@@ -287,8 +285,7 @@ public class CalendarioController implements Initializable {
     }
 
     /**
-     * Gestisce l'evento di click sul bottone "Torna alla Dashboard" 
-     * Invoca il Singleton ViewDispatcher per eseguire lo switch della Scena verso la Home
+     * invoca il singleton del view dispatcher per poraere l'utente alla home
      */
     @FXML
     private void tornaDashboardAction(javafx.event.ActionEvent event) {
@@ -296,8 +293,8 @@ public class CalendarioController implements Initializable {
             // Chiama il dispatcher per tornare alla homeView
             it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher.getInstance().homeView();
         } catch (Exception e) {
-            System.err.println("Errore durante il ritorno alla Dashboard: " + e.getMessage());
+            System.err.println("Errore durante il ritorno alla dashboard: " + e.getMessage());
             e.printStackTrace();
         }
     }
-}
+} 

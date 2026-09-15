@@ -25,7 +25,7 @@
         <TextField fx:id="titoloField" prefHeight="40.0" prefWidth="300.0" promptText="Titolo dell'attività " />
         <DatePicker fx:id="scadenzaPicker" prefHeight="40.0" prefWidth="300.0" promptText="Data di scadenza" />
         
-        <!-- Blocco Categoria + Bottone Epica 6 -->
+        <!-- categoria e bottone dell'epica 6 -->
         <VBox alignment="CENTER_RIGHT" maxWidth="300.0" spacing="2.0">
             <children>
                 <ComboBox fx:id="categoriaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona categoria" />
@@ -39,7 +39,6 @@
         
         <ComboBox fx:id="prioritaComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Seleziona priorità" />
 
-        <!-- EPICA 5: Box per le notifiche manuali (Umanizzato e pulito) -->
         <VBox alignment="CENTER" spacing="10.0" style="-fx-border-color: #d1d3e2; -fx-border-radius: 8; -fx-padding: 15;">
             <children>
                 <Label text="Impostazioni Notifiche" textFill="#4e73df">

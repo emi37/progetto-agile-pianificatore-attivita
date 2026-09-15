@@ -36,7 +36,6 @@ public class ModificaAttivitaController implements Initializable {
     @FXML private ComboBox<String> prioritaComboBox;
     @FXML private CheckBox completataCheckBox;
     
-    // Nodi per l'Epica 5 e 6
     @FXML private CheckBox promemoriaManualeCheck;
     @FXML private ComboBox<String> anticipoComboBox;
     @FXML private Label erroreLabel;
@@ -73,7 +72,7 @@ public class ModificaAttivitaController implements Initializable {
                 this.prioritaComboBox.setValue(this.attivitaInModifica.getPriorita().getLivello());
                 this.completataCheckBox.setSelected(this.attivitaInModifica.isCompletata());
             } else {
-                this.erroreLabel.setText("Nessuna attività trovata nel dispatcher.");
+                this.erroreLabel.setText("Nessuna attività trovata.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,10 +109,10 @@ public class ModificaAttivitaController implements Initializable {
                     aggiornaTendinaCategorie(u.getId());
                     this.categoriaComboBox.setValue(salvata.getNomeCategoria());
                 } else {
-                    this.erroreLabel.setText("Errore SQL durante l'inserimento");
+                    this.erroreLabel.setText("Errore durante l'inserimento");
                 }
             } catch (Exception e) {
-                System.err.println("Errore logico in aggiungiCategoriaAction");
+                System.err.println("Errore");
                 e.printStackTrace();
             }
         });
@@ -131,24 +130,23 @@ public class ModificaAttivitaController implements Initializable {
             LocalDate scadenza = this.scadenzaPicker.getValue();
             
             if (titolo == null || titolo.trim().isEmpty()) {
-                this.erroreLabel.setText("Il Titolo è obbligatorio.");
+                this.erroreLabel.setText("Il titolo è obbligatorio.");
                 return;
             }
             
             if (this.categoriaComboBox.getValue() == null || this.prioritaComboBox.getValue() == null) {
-                this.erroreLabel.setText("Seleziona Categoria e Priorità.");
+                this.erroreLabel.setText("Seleziona una categoria e una priorità.");
                 return;
             }
 
             if (scadenza == null) {
-                this.erroreLabel.setText("Data scadenza richiesta per i promemoria.");
+                this.erroreLabel.setText("La data di scadenza è richiesta per i promemoria.");
                 return;
             }
 
             String categoriaSelezionata = this.categoriaComboBox.getValue();
             String prioritaSelezionata = this.prioritaComboBox.getValue();
 
-            // Sostituzione dello switch con il fetch dell'ID reale dal DB
             int idCategoriaReale = -1;
             if (this.listaCategorieDB != null) {
                 for (Categoria c : this.listaCategorieDB) {
@@ -225,7 +223,7 @@ public class ModificaAttivitaController implements Initializable {
     @FXML
     private void eliminaAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Conferma Eliminazione");
+        alert.setTitle("Conferma di eliminazione");
         alert.setHeaderText("Sei sicuro di voler eliminare questa attività?");
         alert.setContentText("L'azione è irreversibile e i dati andranno persi.");
 

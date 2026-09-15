@@ -14,15 +14,14 @@ import java.sql.SQLException;
 
 public class DatabaseManager {
 
-    // Cambia questi valori con quelli del tuo database!
+    // connessione al db
     private static final String URL = "jdbc:mysql://localhost:3306/progetto_agile_pianificatore_attivita?noAccessToProcedureBodies=true&serverTimezone=Europe/Rome";
-    private static final String USER = "root"; //username MySQL
-    private static final String PASSWORD = "12345"; // password MySQL
+    private static final String USER = "root"; //username mysql
+    private static final String PASSWORD = "12345"; // password mysql
 
-    /**
-     * Metodo statico per ottenere la connessione al DBMS. Come da appunti, si
-     * utilizza DriverManager.getConnection.
-     */
+    
+    //  metodo per la cnessione al db
+     
     public static Connection getConnection() throws SQLException {
         // DriverManager restituisce un oggetto Connection pronto all'uso
         return DriverManager.getConnection(URL, USER, PASSWORD);

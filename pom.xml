@@ -16,7 +16,7 @@
     </properties>
 
     <dependencies>
-        <!-- Framework JUnit per scrivere ed eseguire i test -->
+        <!--dipendenza di J Unit per scrivere ed eseguire il testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -24,20 +24,20 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JavaFX Controls (Interfaccia base) -->
+        <!-- Javfx Controls(interfaccia base) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>18.0.1</version>
         </dependency>
 
-        <!-- JavaFX FXML (Per leggere i file .fxml) -->
+        <!-- javafx FXML (per leggere i file .fxml) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>18.0.1</version>
         </dependency>
-        <!-- Driver JDBC per MySQL -->
+        <!-- il driver jdbc per il db-->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>

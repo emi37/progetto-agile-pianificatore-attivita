@@ -1,9 +1,8 @@
 package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain;
 
 /**
- * Classe di dominio che rappresenta una Categoria.
- * Aggiornata per contenere l'ID del database e il riferimento all'utente proprietario.
- */
+ * classe base per le categorie*/
+
 public class Categoria {
 
     private int id;

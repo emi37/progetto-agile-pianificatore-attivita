@@ -7,24 +7,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Classe che gestisce le operazioni di database riguardanti gli utenti.
+ * la classe gestisce le operazion di base delli utenti
  */
 public class UtenteDAO {
 
     public Utente autentica(String username, String password) {
         String query = "SELECT * FROM utenti WHERE username = ? AND password = ?";
         
-        // Uso del try-with-resources e del DatabaseManager per la connessione
+        // per la connessioe al db manager 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             
-            // Parametri sicuri per prevenire attacchi SQL Injection
             statement.setString(1, username);
             statement.setString(2, password);
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    // Leggiamo l'id dal database (assicurati che la colonna si chiami 'id' o 'id_utente')
                     int id = resultSet.getInt("id_utente"); 
                     
                     return new Utente(
@@ -42,20 +40,17 @@ public class UtenteDAO {
     }
 
     /**
-     * Registra un nuovo utente nel database.
-     * Utilizza una query INSERT protetta da PreparedStatement.
-     */
+     * nuovo utente nel db     */
     public boolean registraUtente(String username, String password) {
         String query = "INSERT INTO utenti (username, password) VALUES (?, ?)";
         
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             
-            // Impostiamo i parametri in modo sicuro contro le SQL Injection
             statement.setString(1, username);
             statement.setString(2, password);
             
-            // executeUpdate() restituisce il numero di righe modificate nel DB
+            // executeUpdate() restituisce il numero di righe modificate nel db
             int righeInserite = statement.executeUpdate();
             
             // Se almeno una riga è stata inserita, la registrazione ha avuto successo

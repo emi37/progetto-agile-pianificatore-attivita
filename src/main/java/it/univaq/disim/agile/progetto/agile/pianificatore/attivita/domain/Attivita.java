@@ -3,9 +3,7 @@ package it.univaq.disim.agile.progetto.agile.pianificatore.attivita.domain;
 import java.time.LocalDate;
 
 /**
- * Classe di dominio che rappresenta un'attività (Task) pianificata dall'utente.
- * Aggiornata per mappare fedelmente tutte le Foreign Keys del DB (inclusione di Utente, Categoria e Priorità).
- */
+ * classe base per le attività*/
 public class Attivita {
 
     private int id;
@@ -27,9 +25,7 @@ public class Attivita {
     private Priorita priorita;
 
     /**
-     * Costruttore completo per istanziare un'attività.
-     * Utilizza il riferimento 'this' per garantire l'Information Hiding.
-     */
+     * costruttore */
     public Attivita(int id, String titolo, String descrizione, LocalDate dataScadenza, 
                     LocalDate dataCompletamento, boolean completata, Utente utente, Categoria categoria, Priorita priorita) {
         

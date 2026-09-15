@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 
-<!-- struttura per la registrazione -->
+<!-- struttura per la registrazine di un nuovo utente  -->
 <VBox alignment="CENTER" spacing="15.0" stylesheets="@registrazione.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.disim.agile.progetto.agile.pianificatore.attivita.controller.RegistrazioneController">
    
    <Label text="Crea un nuovo account" style="-fx-font-size: 16px; -fx-font-weight: bold;" />

@@ -14,9 +14,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller per la vista del Login. Initializable e per eseguire le logiche
- * all'avvio.
- */
+ * controller per la vista del login */
 public class LoginController implements Initializable {
 
     @FXML

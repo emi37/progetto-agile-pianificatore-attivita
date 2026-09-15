@@ -23,7 +23,7 @@ import java.util.List;
 public class NotificaDAO {
 
     /**
-     * Salva una nuova notifica sul database
+     *salva una nuova notifica sul database
      */
     public boolean inserisciNotifica(Notifica notifica) {
         String sql = "INSERT INTO notifica (messaggio, stato, data_invio, id_attivita) VALUES (?, ?, ?, ?)";
@@ -41,20 +41,17 @@ public class NotificaDAO {
             return affectedRows > 0;
             
         } catch (SQLException e) {
-            System.err.println("Errore in inserimento notifica: " + e.getMessage());
+            System.err.println("Errore nell' inserimento della notifica: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
-    /**
-     * Tira fuori le notifiche da far poppare a schermo per l'utente loggato.
-     * Filtra per stato e per orario (tutto quello che è antecedente o uguale ad adesso).
-     */
+    
+    //prende le notifiche dell'utente dal db
     public List<Notifica> estraiNotificheDaMostrare(int idUtente) {
         List<Notifica> lista = new ArrayList<>();
         
-        // La join serve per capire di che attività stiamo parlando (ci serve almeno il titolo)
         String sql = "SELECT n.id_notifica, n.messaggio, n.stato, n.data_invio, " +
                      "a.id_attivita, a.titolo, p.id_priorita, p.livello " +
                      "FROM notifica n " +
@@ -69,7 +66,6 @@ public class NotificaDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     
-                    // Ricostruiamo i pezzi del dominio partendo dal basso
                     Priorita p = new Priorita(rs.getInt("id_priorita"), rs.getString("livello"));
                     Attivita a = new Attivita(rs.getInt("id_attivita"), rs.getString("titolo"), null, null, null, false, null, null, p);
                     
@@ -90,9 +86,7 @@ public class NotificaDAO {
         return lista;
     }
 
-    /**
-     * Da chiamare quando l'utente chiude il pop-up
-     */
+    
     public boolean aggiornaStatoLetta(int idNotifica) {
         String sql = "UPDATE notifica SET stato = 'LETTA' WHERE id_notifica = ?";
         

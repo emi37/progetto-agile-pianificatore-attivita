@@ -4,16 +4,14 @@ import java.time.LocalDateTime;
 
 public class Notifica {
 
-    // Mappatura esatta delle colonne del DB
     private int idNotifica;
     private String messaggio;
     private String stato;
     private LocalDateTime dataInvio;
     
-    // Relazione con l'entità principale
     private Attivita attivita;
 
-    // Costruttore completo (solitamente usato in fase di estrazione dati dal DAO)
+    // costruttore completo(usato dal DAO quando estrae i dati)
     public Notifica(int idNotifica, String messaggio, String stato, LocalDateTime dataInvio, Attivita attivita) {
         this.idNotifica = idNotifica;
         this.messaggio = messaggio;
@@ -22,7 +20,7 @@ public class Notifica {
         this.attivita = attivita;
     }
 
-    // Costruttore per la creazione di nuove notifiche dall'interfaccia (l'ID lo deciderà MySQL)
+    //costruttore per la creazione di nuove notifiche dall'interfaccia
     public Notifica(String messaggio, String stato, LocalDateTime dataInvio, Attivita attivita) {
         this.messaggio = messaggio;
         this.stato = stato;
@@ -30,7 +28,6 @@ public class Notifica {
         this.attivita = attivita;
     }
 
-    // --- Getter e Setter ---
 
     public int getIdNotifica() {
         return idNotifica;

@@ -5,24 +5,22 @@ import it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewExce
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-/**
- * Classe di avvio dell'applicazione JavaFX.
- */
+
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
         try {
-            // Chiediamo al Dispatcher di caricare la schermata iniziale (il Login)
+            // il dispatcher carica la schermata inziale del progetto ovvero il login
             ViewDispatcher.getInstance().loginView(stage);
         } catch (ViewException e) {
-            System.err.println("Errore critico all'avvio dell'applicazione: " + e.getMessage());
+            System.err.println("Errore all'avvio riprovare: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
-        // Metodo standard per lanciare il framework JavaFX
+        //  per lanciare javafx
         launch(args);
     }
 }

@@ -79,7 +79,7 @@ public class CalendarioController implements Initializable {
             attivitaFiltrate = tutteLeAttivita.stream()
                     .filter(a -> {
                         String pStr = estraiPrioritaStringa(a);
-                        return "ALTA".equalsIgnoreCase(pStr) || "Alta".equalsIgnoreCase(pStr);
+                        return "ALTA".equalsIgnoreCase(pStr);
                     })
                     .collect(Collectors.toList());
         }
@@ -162,7 +162,7 @@ public class CalendarioController implements Initializable {
 
             int riga = 1;
             int colonna = giornoInizio - 1;
-            
+
             // Ciclo tutti i giorni del mese posizionandoli nelle celle 
             for (int giorno = 1; giorno <= giorniTotali; giorno++) {
                 LocalDate dataCasella = LocalDate.of(dataCorrente.getYear(), dataCorrente.getMonth(), giorno);
@@ -179,7 +179,7 @@ public class CalendarioController implements Initializable {
 
         calendarioContainer.getChildren().add(gridPane);
     }
-    
+
     // costruisco la singola casella(il box)per un giornio specifico del calendsario
     // se ci sono attività in quella data, colora quel sbox
     private VBox creaBoxGiorno(LocalDate data, String testoVisualizzato, List<Attivita> listaAttivita) {
@@ -192,7 +192,7 @@ public class CalendarioController implements Initializable {
             haAttivita = listaAttivita.stream()
                     .anyMatch(a -> a.getDataScadenza() != null && a.getDataScadenza().equals(data));
         }
-        
+
         // gli do il css a seconda che il giorno abbia o meno delle attività programmate
         if (haAttivita) {
             box.getStyleClass().add("giorno-box-attivo");
@@ -208,37 +208,24 @@ public class CalendarioController implements Initializable {
             lbl.getStyleClass().add("giorno-label-vuoto");
         }
         box.getChildren().add(lbl);
-        
+
         // Se il giorno è occupato, mette un pallino verde come "promemoria visivo"
         if (haAttivita) {
-            Label badge = new Label("●");
+            Label badge = new Label("\u25CF");
             badge.getStyleClass().add("giorno-badge");
             box.getChildren().add(badge);
         }
-        
+
         // Cliccando sul giorno si apre un popup con i dettagli delle attività di quella giornata
         box.setOnMouseClicked(event -> mostraDettaglioGiorno(data, listaAttivita));
 
         return box;
     }
-    
+
     // Metodo per estrarre la stringa della priorità da un'attività
     private String estraiPrioritaStringa(Attivita a) {
-        try {
-            Object p = a.getPriorita();
-            if (p != null) {
-                try {
-                    java.lang.reflect.Method m = p.getClass().getMethod("getLivello");
-                    Object val = m.invoke(p);
-                    if (val != null) {
-                        return val.toString();
-                    }
-                } catch (Exception ex) {
-                    return p.toString();
-                }
-            }
-        } catch (Exception e) {
-            
+        if (a != null && a.getPriorita() != null) {
+            return a.getPriorita().toString();
         }
         return "Normale";
     }
@@ -288,13 +275,13 @@ public class CalendarioController implements Initializable {
      * invoca il singleton del view dispatcher per poraere l'utente alla home
      */
     @FXML
-    private void tornaDashboardAction(javafx.event.ActionEvent event) {
+    private void tornaDashboardAction(ActionEvent event) {
         try {
             // Chiama il dispatcher per tornare alla homeView
-            it.univaq.disim.agile.progetto.agile.pianificatore.attivita.view.ViewDispatcher.getInstance().homeView();
+            ViewDispatcher.getInstance().homeView();
         } catch (Exception e) {
             System.err.println("Errore durante il ritorno alla dashboard: " + e.getMessage());
             e.printStackTrace();
         }
     }
-} 
+}

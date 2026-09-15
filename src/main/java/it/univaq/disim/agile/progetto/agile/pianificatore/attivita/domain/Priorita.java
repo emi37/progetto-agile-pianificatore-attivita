@@ -25,4 +25,9 @@ public class Priorita {
     public void setLivello(String livello) {
         this.livello = livello;
     }
+    
+    @Override
+    public String toString() {
+        return livello;
+    }
 }

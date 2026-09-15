@@ -25,7 +25,16 @@ public class Attivita {
     private Priorita priorita;
 
     /**
-     * costruttore */
+     * costruttore
+     * @param id
+     * @param titolo
+     * @param descrizione
+     * @param dataScadenza
+     * @param dataCompletamento
+     * @param completata
+     * @param utente
+     * @param categoria
+     * @param priorita */
     public Attivita(int id, String titolo, String descrizione, LocalDate dataScadenza, 
                     LocalDate dataCompletamento, boolean completata, Utente utente, Categoria categoria, Priorita priorita) {
         
